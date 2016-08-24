@@ -1,0 +1,6 @@
+{
+  "port": 8989,
+  "env": "local",
+  "rootPath": "",
+  "db-url": "mongodb://localhost:27017/kadse"
+}
