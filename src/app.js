@@ -54,10 +54,7 @@ require('./model/userModel');
 require('./model/statisticModel');
 require('./model/apiModel');
 
-app.use(config.rootPath, require('./routes/public/publicRoutes'));
-app.use(`${config.rootPath}/api`, require('./routes/api/apiRoutes'));
-app.use(`${config.rootPath}/internal`, require('./routes/internal/internalRoutes'));
-app.use(`${config.rootPath}/telegram`, require('./routes/telegram/telegramRoutes'));
+app.use(config.rootPath, require('./routes/apiRoutes'));
 // Swagger redirect
 app.use(`${config.rootPath}/docs`, express.static('swagger'));
 

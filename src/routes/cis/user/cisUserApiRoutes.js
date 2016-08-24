@@ -1,4 +1,4 @@
-const cisUserApiController = require('../../../controller/api/cis/user/cisUserApiController');
+const cisUserApiController = require('../../../controller/cis/user/cisUserApiController');
 const cisUserAuthApiRoutes = require('./auth/cisUserAuthApiRoutes');
 const router = require('express').Router();
 
