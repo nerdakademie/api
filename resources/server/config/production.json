@@ -1,6 +1,6 @@
 {
-  "port": 8989,
+  "port": 8990,
   "env": "local",
   "rootPath": "",
-  "db-url": "mongodb://localhost:27017/kadse"
+  "db-url": "mongodb://localhost:27017/api"
 }
