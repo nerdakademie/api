@@ -4,17 +4,7 @@ const istanbul = require('gulp-istanbul');
 const KarmaServer = require('karma').Server;
 const mocha = require('gulp-mocha');
 const runSequence = require('run-sequence');
-const webpack = require('webpack-stream');
 
-const webpackClientConfig = require('./resources/client/webpack/webpack-client.config.js');
-
-gulp.task('build-client', () => gulp.src('./src/client/app.jsx')
-  .pipe(webpack(webpackClientConfig))
-  .pipe(gulp.dest('./resources/server/public')));
-
-gulp.task('build', (done) => {
-  runSequence('build-client', done);
-});
 
 gulp.task('eslint', () => {
   const jsFiles = [
@@ -35,11 +25,11 @@ gulp.task('eslint', () => {
 gulp.task('testServer', () => {
   process.env.NODE_CONFIG_DIR = './test-resources/server/config';
 
-  gulp.src('./src/server/**/*.js')
+  gulp.src('./src/**/*.js')
     .pipe(istanbul())
     .pipe(istanbul.hookRequire());
 
-  return gulp.src('./test/server/**/*Spec.js')
+  return gulp.src('./test/**/*Spec.js')
     .pipe(mocha({reporter: 'spec'}))
     .pipe(istanbul.writeReports({
       dir: './target/coverage/server',

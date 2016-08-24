@@ -1,8 +1,8 @@
 const User = require('mongoose').model('User');
-const Userhelper = require('../../../helper/userHelper');
+const Userhelper = require('../../helper/userHelper');
 const requestmodule = require('request');
 const cheerio = require('cheerio');
-const speiseplanHelper = require('../../../helper/cis/speiseplanHelper');
+const speiseplanHelper = require('../../helper/cis/speiseplanHelper');
 const moment = require('moment');
 
 module.exports = (() => {

@@ -1,6 +1,6 @@
 const User = require('mongoose').model('User');
 const $ = require('jquery');
-const userHelper = require('../../../helper/userHelper');
+const userHelper = require('../../helper/userHelper');
 
 module.exports = (() => {
 

@@ -1,6 +1,6 @@
 const config = require('config');
 const os = require('os');
-const packageJson = require('../../../../package.json');
+const packageJson = require('../../../package.json');
 const aggregatedStatusHelper = require('../../helper/aggregatedStatusHelper');
 
 module.exports = (() => {

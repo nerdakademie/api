@@ -2,7 +2,7 @@
 const config = require('config');
 const debug = require('debug');
 
-const app = require('../src/server/app');
+const app = require('../src/app');
 app.set('port', config.get('port'));
 
 const server = require('http').createServer(app);

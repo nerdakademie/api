@@ -1,4 +1,4 @@
-const cisUserHelper = require('../../../../helper/cis/user/cisUserHelper');
+const cisUserHelper = require('../../../helper/cis/user/cisUserHelper');
 
 module.exports = (() => {
   function getNAKAuthCookie(request, response) {

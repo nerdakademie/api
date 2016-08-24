@@ -1,4 +1,4 @@
-const cisUserAuthHelper = require('../../../../../helper/cis/user/auth/cisUserAuthHelper');
+const cisUserAuthHelper = require('../../../../helper/cis/user/auth/cisUserAuthHelper');
 
 module.exports = (() => {
   function getUserKey(request, response) {
