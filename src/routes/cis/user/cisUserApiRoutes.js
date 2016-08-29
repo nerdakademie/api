@@ -4,7 +4,8 @@ const router = require('express').Router();
 
 router.post('/getAuthCookie', cisUserApiController.getNAKAuthCookie);
 router.get('/getUserDetails', cisUserApiController.getUserDetails);
-router.get('/grades', cisUserApiController.getGrades);
+router.get('/exams', cisUserApiController.getGrades);
+router.get('/exams/:examid', cisUserApiController.getExamDetails);
 router.get('/getSeminarsParticipated', cisUserApiController.getSeminarsParticipated);
 router.get('/seminars', cisUserApiController.getAvailableSeminars);
 router.get("/seminars/:seminarid", cisUserApiController.getSeminarInfo);

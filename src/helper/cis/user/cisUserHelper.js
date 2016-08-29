@@ -38,6 +38,30 @@ module.exports = (() => {
     });
   }
 
+  function getExamDetails(userkey, examnr, callback){
+    cisUserAuthHelper.getValidTypoCookieByApiKey(userkey, function(typoCookie){
+      if (typoCookie === false) {
+        callback(false);
+      } else {
+        const ar = request.jar();
+        const cookie = request.cookie('fe_typo_user=' + typoCookie);
+        const url = 'https://cis.nordakademie.de/pruefungsamt/pruefungsergebnisse/?no_cache=1&tx_nahrgrades_nahrgradesmodules%5BperformanceId%5D='+examnr+'&tx_nahrgrades_nahrgradesmodules%5Baction%5D=statistic&tx_nahrgrades_nahrgradesmodules%5Bcontroller%5D=Notenverwaltung';
+        ar.setCookie(cookie, url);
+        request.get({url: url, jar: ar}, function (err, httpContent, body) {
+          let gradeTable = body.match(/[\d\,]{22}/g)[0].split(',');
+          gradeTable = gradeTable.filter(function(n){ return n !== ''});
+          const keys = ['1,0', '1,3', '1,7',	'2,0', '2,3', '2,7', '3,0',	'3,3', '3,7',	'4,0', '5,0'];
+          const returnJSON = {}
+          for(let element = 0; element < gradeTable.length; element++ ){
+            returnJSON[keys[element]] = parseInt(gradeTable[element]);
+          }
+          callback(returnJSON);
+        });
+
+      }
+    })
+  }
+
   function getSeminarsParticipated(userkey, callback) {
     cisUserAuthHelper.getValidTypoCookieByApiKey(userkey, function(typoCookie) {
       const ar = request.jar();
@@ -158,6 +182,7 @@ module.exports = (() => {
   return {
     getUserDetails,
     getGrades,
+    getExamDetails,
     getSeminarsParticipated,
     getSeminars,
     getSeminarsSwitchCase,
