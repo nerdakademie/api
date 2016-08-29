@@ -33,7 +33,6 @@
     "express-session": "1.14.0",
     "express-session-mongo": "0.1.0",
     "cheerio": "0.20.0",
-    "cheerio-advanced-selectors": "1.1.1",
     "request": "2.74.0",
     "debug": "2.2.0",
     "express": "4.14.0",

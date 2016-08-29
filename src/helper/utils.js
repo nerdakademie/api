@@ -13,8 +13,7 @@ module.exports = (() => {
   }
 
   function parseTable(cheerioHandle, selection, keys, elementCount, offset) {
-    const tableDictionary = [];
-    console.log(cheerioHandle('div.google-visualization-table').html());
+    const tableDictionary = [];s
     cheerioHandle(selection).each(function (id, elem) {
       if (offset === undefined || id >= offset) {
         const eachEntry = {};

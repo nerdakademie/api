@@ -1,6 +1,5 @@
 const request = require('request');
 const cheerio = require('cheerio');
-const cheerioAdv = require('cheerio-advanced-selectors');
 const utils = require('../../utils');
 const cisUserAuthHelper = require('./auth/cisUserAuthHelper');
 
@@ -50,7 +49,7 @@ module.exports = (() => {
         request.get({url: url, jar: ar}, function (err, httpContent, body) {
           let gradeTable = body.match(/[\d\,]{22}/g)[0].split(',');
           gradeTable = gradeTable.filter(function(n){ return n !== ''});
-          const keys = ['1,0', '1,3', '1,7',	'2,0', '2,3', '2,7', '3,0',	'3,3', '3,7',	'4,0', '5,0'];
+          const keys = ['1,0', '1,3', '1,7', '2,0', '2,3', '2,7', '3,0',	'3,3', '3,7',	'4,0', '5,0'];
           const returnJSON = {}
           for(let element = 0; element < gradeTable.length; element++ ){
             returnJSON[keys[element]] = parseInt(gradeTable[element]);
@@ -83,14 +82,19 @@ module.exports = (() => {
       } else {
         const ar = request.jar();
         const cookie = request.cookie('fe_typo_user=' + typoCookie);
-        const url = 'https://cis.nordakademie.de/seminarwesen/?tx_nasemdb_pi1[action]=programm';
-        //const form = {};
-        //form['tx_nasemdb_pi1[quartal]'] = utils.getSeminarQuarterID(year,quarter);
-        //const form = {'tx_nasemdb_pi1[quartal]' : utils.getSeminarQuarterID(year,quarter)};
-        //console.log(form);
-        ar.setCookie(cookie, url);
-        request.get({url: url, jar: ar}, function (error, httpContent, body) {
-          console.log(httpContent.post);
+        ar.setCookie(cookie, 'https://cis.nordakademie.de/seminarwesen/');
+        const options = { method: 'POST',
+          url: 'https://cis.nordakademie.de/seminarwesen/',
+          qs: { 'tx_nasemdb_pi1[action]': 'programm' },
+          jar: ar,
+          headers:
+          { 'content-type': 'application/x-www-form-urlencoded',
+          'cache-control': 'no-cache' },
+          form: { 'tx_nasemdb_pi1[quartal]': utils.getSeminarQuarterID(year,quarter) }
+        };
+
+        request(options, function (error, httpContent, body) {
+          console.log(body);
           const $ = cheerio.load(body);
           const keys = ['description', 'from', 'to', 'grade', 'credits'];
           callback(utils.parseAvailableSeminarsTable($, 'table',2 , 'tr',1));
