@@ -128,6 +128,7 @@ module.exports = (() => {
         callback(returnObject);
       }
     });
+
     getSeminarParticipants(userkey,seminarid,function (participantsArray){
       returnObject.participants = participantsArray;
       counter = counter + 1;
@@ -137,6 +138,55 @@ module.exports = (() => {
     })
   }
 
+  function registerForSeminar(userkey, seminarid, callback){
+    cisUserAuthHelper.getValidTypoCookieByApiKey(userkey, function(typoCookie) {
+      if (typoCookie === false){
+        callback(false);
+      } else {
+        const ar = request.jar();
+        const cookie = request.cookie('fe_typo_user=' + typoCookie);
+        ar.setCookie(cookie, 'https://cis.nordakademie.de/seminarwesen/');
+        const options = { method: 'POST',
+          url: 'https://cis.nordakademie.de/seminarwesen/',
+          headers: { 'content-type': 'application/x-www-form-urlencoded',
+                    'cache-control': 'no-cache' },
+         jar: ar,
+         form: { 'tx_nasemdb_pi1[seminarnr]': seminarid,
+          'tx_nasemdb_pi1[go]': 'Ja, ich will mich anmelden',
+          'tx_nasemdb_pi1[action]': 'anmelden_ok' } };
+
+          request(options, function (error, response, body) {
+            console.log(response.statusCode);
+            if (error){
+                callback(false);
+            } else if(response.statusCode === 200){
+              callback({success:true})
+            }
+          });
+      }
+    });
+  }
+
+  function deleteRegistrationForSeminar(userkey, seminarid, callback){
+    cisUserAuthHelper.getValidTypoCookieByApiKey(userkey, function(typoCookie) {
+      if (typoCookie === false){
+        callback(false);
+      } else {
+        const ar = request.jar();
+        const cookie = request.cookie('fe_typo_user=' + typoCookie);
+        const url = 'https://cis.nordakademie.de/seminarwesen/?tx_nasemdb_pi1[action]=abmelden&tx_nasemdb_pi1[seminarnr]='+seminarid;
+        ar.setCookie(cookie, url);
+        request.get({url: url, jar: ar}, function (err, httpContent, body) {
+          if (httpContent.statusCode === 404) {
+            callback(false);
+          } else if (httpContent.statusCode === 200) {
+            // all good cookie valid
+            callback({sucess: true});
+          }
+        });
+      }
+    });
+  }
 
   function getSeminarDetails(userkey, seminarid, callback){
     cisUserAuthHelper.getValidTypoCookieByApiKey(userkey, function(typoCookie) {
@@ -190,6 +240,8 @@ module.exports = (() => {
     getSeminarsParticipated,
     getSeminars,
     getSeminarsSwitchCase,
-    getSeminarInfo
+    getSeminarInfo,
+    registerForSeminar,
+    deleteRegistrationForSeminar
   };
 })();

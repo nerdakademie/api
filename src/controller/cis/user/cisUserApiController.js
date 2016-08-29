@@ -91,6 +91,27 @@ module.exports = (() => {
     }
   }
 
+  function registerForSeminar(request, response) {
+    if (request.body.userkey === null || request.params.seminarid === undefined) {
+      response.status(404).json({success: false, message: 'error wrong data specified'});
+      response.end();
+    } else {
+      cisUserHelper.registerForSeminar(request.body.userkey,request.params.seminarid, function(userTable) {
+        response.json(userTable);
+      });
+    }
+  }
+
+  function deleteRegistrationForSeminar(request, response) {
+    if (request.body.userkey === null || request.params.seminarid === undefined) {
+      response.status(404).json({success: false, message: 'error wrong data specified'});
+      response.end();
+    } else {
+      cisUserHelper.deleteRegistrationForSeminar(request.body.userkey,request.params.seminarid, function(userTable) {
+        response.json(userTable);
+      });
+    }
+  }
 
   return {
     getNAKAuthCookie,
@@ -99,6 +120,8 @@ module.exports = (() => {
     getExamDetails,
     getSeminarsParticipated,
     getAvailableSeminars,
-    getSeminarInfo
+    getSeminarInfo,
+    registerForSeminar,
+    deleteRegistrationForSeminar
   };
 })();

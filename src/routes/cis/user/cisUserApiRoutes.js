@@ -9,6 +9,8 @@ router.get('/exams/:examid', cisUserApiController.getExamDetails);
 router.get('/getSeminarsParticipated', cisUserApiController.getSeminarsParticipated);
 router.get('/seminars', cisUserApiController.getAvailableSeminars);
 router.get("/seminars/:seminarid", cisUserApiController.getSeminarInfo);
+router.put("/seminars/:seminarid", cisUserApiController.registerForSeminar);
+router.delete("/seminars/:seminarid", cisUserApiController.deleteRegistrationForSeminar);
 router.use('/auth', cisUserAuthApiRoutes);
 
 module.exports = router;
