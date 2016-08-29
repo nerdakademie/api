@@ -27,6 +27,29 @@ module.exports = (() => {
     return tableDictionary;
   }
 
+  function parseTableRegex(cheerioHandle, selection, keys, elementCount, offset, regexObj) {
+    const tableDictionary = [];
+    cheerioHandle(selection).each(function (id, elem) {
+      if (offset === undefined || id >= offset) {
+        const eachEntry = {};
+        const children = cheerioHandle(elem).children()
+        for (let count = 0; count < elementCount; count++) {
+          if (count.toString() in regexObj){
+            if(removeWhitespace(children.eq(count).html()).length === 0){
+              eachEntry[keys[count]] = "";
+            }else{
+              eachEntry[keys[count]] = removeWhitespace(children.eq(count).html().match(regexObj[count.toString()])[1]);
+            }
+          }else{
+            eachEntry[keys[count]] = removeWhitespace(children.eq(count).text());
+          }
+        }
+        tableDictionary.push(eachEntry);
+      }
+    });
+    return tableDictionary;
+  }
+
   function parseTableAdvanced(cheerioHandle, selection, eqElement, afterEqSelection, keys, elementCount, rowoffset,columnoffset) {
     const tableDictionary = [];
     cheerioHandle(selection).eq(eqElement).find(afterEqSelection).each(function (id, elem) {
@@ -34,7 +57,6 @@ module.exports = (() => {
         const eachEntry = {};
         const children = cheerioHandle(elem).children();
         for (let count = columnoffset; count < elementCount + columnoffset; count++) {
-          console.log(children.eq(count).text());
           eachEntry[keys[count-columnoffset]] = removeWhitespace(children.eq(count).text());
         }
         tableDictionary.push(eachEntry);
@@ -204,6 +226,7 @@ module.exports = (() => {
     removeWhitespace,
     parseTableDetails,
     parseTable,
+    parseTableRegex,
     parseAvailableSeminarsTable,
     getSeminarQuarterID,
     parseTableAdvanced,

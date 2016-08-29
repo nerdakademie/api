@@ -19,7 +19,7 @@ module.exports = (() => {
 
   function getApiUserByApiKey(userKey, callback) {
     Api.findOne({user_key: userKey}).exec((error, apiUser) => {
-      if (error) {
+      if (error || apiUser === null) {
         callback(false);
       } else {
         callback(apiUser);
@@ -94,7 +94,7 @@ module.exports = (() => {
       } else if (count === 1) {
         getApiUserByName(username, function (apiUser) {
           if (password === apiUser.pass) {
-            callback({success: true, apikey: apiUser.api_key});
+            callback({success: true, userkey: apiUser.user_key});
           } else {
             callback(false);
           }

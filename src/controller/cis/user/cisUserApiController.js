@@ -34,7 +34,11 @@ module.exports = (() => {
       response.end();
     } else {
       cisUserHelper.getGrades(request.query.userkey, function(userTable) {
-        response.json(userTable);
+        if (userTable === false) {
+          response.json({sucess: false});
+        }else{
+          response.json(userTable);
+        }
       });
     }
   }

@@ -54,9 +54,9 @@ require('./model/userModel');
 require('./model/statisticModel');
 require('./model/apiModel');
 
-app.use(config.rootPath, require('./routes/apiRoutes'));
+app.use(`${config.rootPath}/v1`, require('./routes/apiRoutes'));
 // Swagger redirect
-app.use(`${config.rootPath}/docs`, express.static('swagger'));
+app.use(config.rootPath, express.static('swagger'));
 
 app.use(`${config.rootPath}/test`, require('./routes/test/testRoutes'));
 

@@ -22,15 +22,19 @@ module.exports = (() => {
 
   function getGrades(apikey, callback) {
     cisUserAuthHelper.getValidTypoCookieByApiKey(apikey, function(typoCookie) {
-      const ar = request.jar();
-      const cookie = request.cookie('fe_typo_user=' + typoCookie);
-      const url = 'https://cis.nordakademie.de/pruefungsamt/pruefungsergebnisse/?no_cache=1';
-      ar.setCookie(cookie, url);
-      request.get({url: url, jar: ar}, function (err, httpContent, body) {
-        const $ = cheerio.load(body);
-        const keys = ['modulenumber', 'description', 'exam_date', 'entry_date', 'grade', 'credits'];
-        callback(utils.parseTable($, '#curricular table tbody tr', keys, keys.length));
-      });
+      if( typoCookie === false) {
+        callback(false);
+      } else {
+        const ar = request.jar();
+        const cookie = request.cookie('fe_typo_user=' + typoCookie);
+        const url = 'https://cis.nordakademie.de/pruefungsamt/pruefungsergebnisse/?no_cache=1';
+        ar.setCookie(cookie, url);
+        request.get({url: url, jar: ar}, function (err, httpContent, body) {
+          const $ = cheerio.load(body);
+          const keys = ['modulenr', 'description', 'exam_date', 'entry_date', 'grade', 'credits', 'examnr'];
+          callback(utils.parseTableRegex($, '#curricular table tbody tr', keys, keys.length,0,{6 : /performanceId%5D=(\d+)/}));
+        });
+      }
     });
   }
 
