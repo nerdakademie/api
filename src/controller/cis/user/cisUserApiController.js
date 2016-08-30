@@ -69,6 +69,17 @@ module.exports = (() => {
     }
   }
 
+  function getSeminarsRegistered(request, response) {
+    if (request.query.userkey === null) {
+      response.status(404).json({success: false, message: 'error wrong data specified'});
+      response.end();
+    } else {
+      cisUserHelper.getSeminarsRegistered(request.query.userkey, function(userTable) {
+        response.json(userTable);
+      });
+    }
+  }
+
   function getAvailableSeminars(request, response) {
     if (request.query.userkey === undefined || request.query.year === undefined, request.query.quarter === undefined) {
       response.status(404).json({success: false, message: 'error wrong data specified'});
@@ -119,6 +130,7 @@ module.exports = (() => {
     getGrades,
     getExamDetails,
     getSeminarsParticipated,
+    getSeminarsRegistered,
     getAvailableSeminars,
     getSeminarInfo,
     registerForSeminar,

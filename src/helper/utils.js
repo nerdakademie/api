@@ -1,3 +1,6 @@
+const moment = require('moment');
+const date_regex = /(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.(19|20)\d\d/
+
 module.exports = (() => {
   'use strict';
   function parseTableDetails(cheerioHandle, selection) {
@@ -6,7 +9,11 @@ module.exports = (() => {
       const children = cheerioHandle(elem).children();
       const dictKey = removeWhitespace(children.eq(0).text());
       if (dictKey.indexOf('ändern') === -1 && dictKey !== '') {
-        tableDictionary[dictKey] = children.eq(1).text().trim();
+        if(date_regex.test(removeWhitespace(children.eq(1).text()))){
+            tableDictionary[dictKey] = moment(removeWhitespace(children.eq(1).text()),'DD.MM.YYYY').format('YYYY-MM-DD');
+        } else {
+          tableDictionary[dictKey] = removeWhitespace(children.eq(1).text());
+        }
       }
     });
     return tableDictionary;
@@ -19,7 +26,11 @@ module.exports = (() => {
         const eachEntry = {};
         const children = cheerioHandle(elem).children();
         for (let count = 0; count < elementCount; count++) {
-          eachEntry[keys[count]] = removeWhitespace(children.eq(count).text());
+          if(date_regex.test(removeWhitespace(children.eq(count).text()))){
+            eachEntry[keys[count]] = moment(removeWhitespace(children.eq(count).text()),'DD.MM.YYYY').format('YYYY-MM-DD');
+          } else {
+            eachEntry[keys[count]] = removeWhitespace(children.eq(count).text());
+          }
         }
         tableDictionary.push(eachEntry);
       }
@@ -41,7 +52,11 @@ module.exports = (() => {
               eachEntry[keys[count]] = removeWhitespace(children.eq(count).html().match(regexObj[count.toString()])[1]);
             }
           }else{
-            eachEntry[keys[count]] = removeWhitespace(children.eq(count).text());
+            if(date_regex.test(removeWhitespace(children.eq(count).text()))){
+              eachEntry[keys[count]] = moment(removeWhitespace(children.eq(count).text()),'DD.MM.YYYY').format('YYYY-MM-DD');
+            } else {
+              eachEntry[keys[count]] = removeWhitespace(children.eq(count).text());
+            }
           }
         }
         tableDictionary.push(eachEntry);
@@ -57,7 +72,11 @@ module.exports = (() => {
         const eachEntry = {};
         const children = cheerioHandle(elem).children();
         for (let count = columnoffset; count < elementCount + columnoffset; count++) {
-          eachEntry[keys[count-columnoffset]] = removeWhitespace(children.eq(count).text());
+          if(date_regex.test(removeWhitespace(children.eq(count).text()))){
+            eachEntry[keys[count-columnoffset]] = moment(removeWhitespace(children.eq(count).text()),'DD.MM.YYYY').format('YYYY-MM-DD');
+          } else {
+            eachEntry[keys[count-columnoffset]] = removeWhitespace(children.eq(count).text());
+          }
         }
         tableDictionary.push(eachEntry);
       }
@@ -74,7 +93,11 @@ module.exports = (() => {
         if(removeWhitespace(children.eq(0).text()).length === 0){
           emptycolumns= emptycolumns + 1;
         }else{
-          tableDictionary[keys[id -emptycolumns - rowoffset]] = removeWhitespace(children.eq(columndata).text());
+          if(date_regex.test(removeWhitespace(children.eq(columndata).text()))){
+            tableDictionary[keys[id -emptycolumns - rowoffset]] = moment(removeWhitespace(children.eq(columndata).text()),'DD.MM.YYYY').format('YYYY-MM-DD');
+          } else {
+            tableDictionary[keys[id -emptycolumns - rowoffset]] = removeWhitespace(children.eq(columndata).text());
+          }
         }
       }
     });
@@ -88,17 +111,50 @@ module.exports = (() => {
       if (id >= offset && id <= cheerioHandle(selection).eq(eqElement).find(afterEqSelection).length - 2) {
         const eachEntry = {};
         const children = cheerioHandle(elem).children();
-        eachEntry['title'] = removeWhitespace(children.eq(0).find('b').text());
-        eachEntry['lecturer'] = removeWhitespace(children.eq(0).find('i').text());
-        eachEntry['from'] = removeWhitespace(children.eq(1).find('b').text());
-        eachEntry['to'] = removeWhitespace(children.eq(2).find('b').text());
-        eachEntry['description'] = removeWhitespace(children.eq(3).text());
-        eachEntry['category'] = children.eq(4).find('img').attr('title');
-        eachEntry['seminarid'] = children.eq(5).find('a').eq(0).attr('href').match(/\d+$/)[0];
+        eachEntry.title = removeWhitespace(children.eq(0).find('b').text());
+        eachEntry.lecturer = removeWhitespace(children.eq(0).find('i').text());
+        eachEntry.from = moment(removeWhitespace(children.eq(1).find('b').text()),'DD.MM.YYYY').format('YYYY-MM-DD');
+        eachEntry.to = moment(removeWhitespace(children.eq(2).find('b').text()),'DD.MM.YYYY').format('YYYY-MM-DD');
+        eachEntry.description = removeWhitespace(children.eq(3).text());
+        eachEntry.category = children.eq(4).find('img').attr('title');
+        eachEntry.seminarid = parseInt(children.eq(5).find('a').eq(0).attr('href').match(/\d+$/)[0]);
         tableDictionary.push(eachEntry);
       }
     });
     return tableDictionary;
+  }
+
+  function parseRegisteredSeminarsTable(cheerioHandle, selection, eqElement, afterEqSelection, rowoffset) {
+    const tableDictionary = [];
+    cheerioHandle(selection).eq(eqElement).find(afterEqSelection).each(function (id, elem) {
+      //remove last line and start at rowoffset
+      if (id >= rowoffset && id <= cheerioHandle(selection).eq(eqElement).find(afterEqSelection).length - 2 - rowoffset) {
+        const eachEntry = {};
+        const children = cheerioHandle(elem).children();
+        const year_quarter = children.eq(1).text().split('-');
+        eachEntry.year = parseInt(removeWhitespace(year_quarter[0]));
+        eachEntry.quarter = parseInt(removeWhitespace(year_quarter[1]));
+        const from_to = children.eq(2).find('b');
+        eachEntry.from = moment(removeWhitespace(from_to.eq(0).text()),'DD.MM.YYYY').format('YYYY-MM-DD');
+        eachEntry.to = moment(removeWhitespace(from_to.eq(1).text()),'DD.MM.YYYY').format('YYYY-MM-DD');
+        eachEntry.title = removeWhitespace(children.eq(3).find('b').text());
+        children.eq(3).find('b').remove();
+        eachEntry.lecturer = removeWhitespace(children.eq(3).not('b').text());
+        eachEntry.register_date = removeWhitespace(children.eq(4).text());
+        eachEntry.register_approved = transformRegisterStatus(removeWhitespace(children.eq(5).text()));
+        eachEntry.seminarid = parseInt(children.eq(6).find('a').eq(0).attr('href').match(/\d+$/)[0]);
+        tableDictionary.push(eachEntry);
+      }
+    });
+    return tableDictionary;
+  }
+
+  function transformRegisterStatus(status){
+    if(status.indexOf('OK!') !== -1 && status.indexOf('Angemeldet!')){
+      return true;
+    }else{
+      return false;
+    }
   }
 
   function getSeminarQuarterID(year, quarter) {
@@ -228,6 +284,7 @@ module.exports = (() => {
     parseTable,
     parseTableRegex,
     parseAvailableSeminarsTable,
+    parseRegisteredSeminarsTable,
     getSeminarQuarterID,
     parseTableAdvanced,
     parseTableAdvancedColumn

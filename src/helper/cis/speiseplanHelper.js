@@ -1,4 +1,5 @@
 const utils = require('./../utils');
+const moment = require('moment');
 module.exports = (() => {
   'use strict';
 
@@ -19,7 +20,7 @@ module.exports = (() => {
     cheerioHandle('td.speiseplan-tag-container').each(function() {
       const eachDayContent = {};
       const meals = [];
-      eachDayContent.date = Dates[dayCounter] + new Date().getFullYear();
+      eachDayContent.date = moment(Dates[dayCounter] + moment().year(),'DD.MM.YYYY').format('YYYY-MM-DD');
       eachDayContent.day = weekdays[dayCounter];
       cheerioHandle('td.speiseplan-tag', this).each(function(id, elem) {
         meals.push(meal(cheerioHandle, elem));

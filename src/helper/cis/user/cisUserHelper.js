@@ -75,6 +75,23 @@ module.exports = (() => {
     });
   }
 
+  function getSeminarsRegistered(userkey, callback){
+    cisUserAuthHelper.getValidTypoCookieByApiKey(userkey, function (typoCookie) {
+      if (typoCookie === false) {
+        callback(false);
+      } else {
+        const ar = request.jar();
+        const cookie = request.cookie('fe_typo_user=' + typoCookie);
+        const url = 'https://cis.nordakademie.de/seminarwesen/?tx_nasemdb_pi1[action]=status';
+        ar.setCookie(cookie, url);
+        request.get({url: url, jar: ar}, function (err, httpContent, body) {
+          const $ = cheerio.load(body);
+          callback(utils.parseRegisteredSeminarsTable($, 'table',1, 'tr', 1));
+        });
+      }
+    });
+  }
+
   function getSeminars(userkey, year, quarter, callback) {
     cisUserAuthHelper.getValidTypoCookieByApiKey(userkey, function (typoCookie) {
       if (typoCookie === false) {
@@ -94,11 +111,8 @@ module.exports = (() => {
         };
 
         request(options, function (error, httpContent, body) {
-          console.log(body);
           const $ = cheerio.load(body);
-          const keys = ['description', 'from', 'to', 'grade', 'credits'];
           callback(utils.parseAvailableSeminarsTable($, 'table',2 , 'tr',1));
-
         });
       }
     });
@@ -239,6 +253,7 @@ module.exports = (() => {
     getExamDetails,
     getSeminarsParticipated,
     getSeminars,
+    getSeminarsRegistered,
     getSeminarsSwitchCase,
     getSeminarInfo,
     registerForSeminar,
