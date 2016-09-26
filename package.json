@@ -1,5 +1,5 @@
 {
-  "name": "KadseBot",
+  "name": "Api",
   "description": "Telegram Bot with Client UI, based on turing-microservice by Benedikt Stemmildt",
   "version": "0.4.0",
   "private": false,
@@ -21,8 +21,8 @@
     ]
   },
   "dependencies": {
-    "node-telegram-bot-api": "0.23.3",
     "body-parser": "1.15.2",
+    "connect-ensure-login": "0.1.x",
     "swagger-node-express": "~2.1",
     "minimist": "*",
     "bcrypt": "0.8.7",
@@ -36,6 +36,12 @@
     "request": "2.74.0",
     "debug": "2.2.0",
     "express": "4.14.0",
+    "oauth2orize": "1.0.x",
+    "passport": "0.2.x",
+    "passport-local": "1.0.x",
+    "passport-http": "0.2.x",
+    "passport-http-bearer": "1.0.x",
+    "passport-oauth2-client-password": "0.1.x",
     "moment": "2.14.1",
     "node-uuid": "1.4.7",
     "mongoose": "4.5.8",
@@ -69,6 +75,7 @@
     "mocha": "3.0.2",
     "node-sass": "3.8.0",
     "nodemon": "1.10.0",
+    "oauth2-server": "oauthjs/node-oauth2-server",
     "phantomjs-prebuilt": "2.1.11",
     "react": "15.3.0",
     "react-dom": "15.3.0",

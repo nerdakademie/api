@@ -10,6 +10,8 @@ const MongoStore = require('express-session-mongo');
 const argv = require('minimist')(process.argv.slice(2));
 const swagger = require('swagger-node-express');
 const path = require('path');
+const oauthserver =  require('oauth2-server');
+const authenticate = require('./helper/oauth/authenticate');
 
 const app = express();
 
@@ -34,9 +36,10 @@ app.use(session({
   store: new MongoStore({ip: '127.0.0.1', port: '27017', db: 'kadse', collection: 'sessions'})
 }));
 
+
 // Swagger configuration
 const subPath = express();
-app.use('/api', subPath);
+app.use('/v1', subPath);
 swagger.setAppHandler(subPath);
 swagger.setApiInfo({
   title: 'Nerdakademie API',
@@ -47,19 +50,20 @@ swagger.setApiInfo({
   licenseUrl: ''
 });
 swagger.configureSwaggerPaths('', 'api-docs', '');
-swagger.configure('https://bot.nerdakademie.xyz/api', '1.0.0');
+swagger.configure('https://api.nerdakademie.xyz/v1', '1.0.0');
 
 require('mongoose').connect(config.get('db-url'));
-require('./model/userModel');
 require('./model/statisticModel');
 require('./model/apiModel');
 
-app.use(`${config.rootPath}/v1`, require('./routes/apiRoutes'));
+//OAUTH
+require('./helper/oauth')(app)
+//require('./helper/oauth/seed');
+
 // Swagger redirect
 app.use(config.rootPath, express.static('swagger'));
-
 app.use(`${config.rootPath}/test`, require('./routes/test/testRoutes'));
-
+app.use(`${config.rootPath}/v1`, require('./routes/apiRoutes'));
 app.use(require('./routes/errorRoutes'));
 
 module.exports = app;
