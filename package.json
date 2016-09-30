@@ -12,7 +12,7 @@
     "build": "gulp build",
     "test": "gulp test",
     "watch": "gulp watch",
-    "start": "NODE_CONFIG_DIR=./resources/config NODE_ENV=production node bin/server.js"
+    "start": "NODE_CONFIG_DIR=./resources/server/config NODE_ENV=production node bin/server.js"
   },
   "babel": {
     "presets": [
