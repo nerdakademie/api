@@ -8,7 +8,19 @@ const OAuthClientSchema = new Schema({
   name:  String,
   clientID:  String,
   clientSecret: String,
-  trustedClient: Boolean,
+  trustedClient: Boolean
 });
+
+
+/*
+db.client.insert({
+ id: '0',
+ name:  'TestApp',
+ clientID:  'test',
+ clientSecret: 'test',
+ trustedClient: false
+ });
+
+ */
 
 mongoose.model('client', OAuthClientSchema);

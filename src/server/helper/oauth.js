@@ -279,9 +279,16 @@ module.exports = (() => {
 
 
   const authorization = [
-    login.ensureLoggedIn(),
+    login.ensureLoggedIn('/oauth/dialog/login'),
     server.authorization(function (clientID, redirectURI, scope, done) {
-      Client.findOne({clientID: clientID}).exec((err, client) => {
+      console.log(clientID);
+      Client.find({}, function(err, docs) {
+        if (!err){
+          console.log(docs);
+        } else {throw err;}
+      });
+      Client.findOne({clientID: 'test'}).exec((err, client) =>{
+        console.log(client);
         if (err) {
           return done(err);
         }
@@ -300,6 +307,7 @@ module.exports = (() => {
       //TODO Make a mechanism so that if this isn't a trusted client, the user can recorded that they have consented
       //but also make a mechanism so that if the user revokes access to any of the clients then they will have to
       //re-consent.
+      console.log('logged in');
       Client.findOne({clientID: req.query.client_id}).exec((err, client) => {
         if (!err && client && client.trustedClient && client.trustedClient === true) {
           //This is how we short call the decision like the dialog below does
@@ -358,7 +366,7 @@ module.exports = (() => {
   });
 
   server.deserializeClient(function (id, done) {
-    db.clients.find(id, function (err, client) {
+    Client.findOne({id: id}).exec((err, client) => {
       if (err) {
         return done(err);
       }

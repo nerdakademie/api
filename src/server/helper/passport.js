@@ -155,11 +155,11 @@ passport.use(new BearerStrategy(
 // the client by ID from the database.
 
 passport.serializeUser(function (user, done) {
-  done(null, user.id);
+  done(null, user.userID);
 });
 
 passport.deserializeUser(function (id, done) {
-  db.users.find(id, function (err, user) {
+  User.findOne({userID: id},function (err, user) {
     done(err, user);
   });
 });

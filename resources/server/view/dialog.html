@@ -1,0 +1,16 @@
+<html>
+<head>
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="{{rootPath}}/css/accessDialog.css"/>
+</head>
+<body>
+<script language="javascript" type="text/javascript">
+    const data = {"user":{{JSON.stringify(user)}},
+    "client": {{JSON.stringify(client)}},
+    "transactionID": "{{transactionID}}"
+    }
+</script>
+<div id="app"></div>
+<script type="text/javascript" src="{{rootPath}}/js/accessDialog.js" ></script>
+</body>
+</html>

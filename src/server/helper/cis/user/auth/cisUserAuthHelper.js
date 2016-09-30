@@ -1,6 +1,7 @@
 const request = require('request');
 const cisUserHelper = require('../cisUserHelper');
 const Api = require('mongoose').model('Api');
+const User = require('mongoose').model('user');
 const uuid = require('node-uuid');
 
 module.exports = (() => {
@@ -105,6 +106,20 @@ module.exports = (() => {
     });
   }
 
+  function loginCorrect(username, password, done){
+    User.count({username: username}, function (err, count) {
+      if(err){
+        done(false)
+      } else if (count === 0) {
+        createUser(username, password, function (result) {
+          done(result);
+        });
+      } else {
+        done({success: true});
+      }
+    });
+  }
+
   function createUser(username, password, callback) {
     isNAKUser(username, password, function (isNakusr) {
       if (isNakusr) {
@@ -112,18 +127,16 @@ module.exports = (() => {
           if (cookie === false) {
             callback(false);
           } else {
-            const userKey = uuid.v4();
-            const api = new Api({
-              user: username,
-              pass: password,
-              user_key: userKey,
-              typo_cookie: cookie
+            const user = new User({
+              username:  username,
+              password:  password,
+              nak_cookie: cookie
             });
-            api.save((error) => {
+            user.save((error) => {
               if (error) {
                 callback(false);
               } else {
-                callback({sucess: true, userkey: userKey});
+                callback({success: true});
               }
             });
           }
@@ -190,6 +203,7 @@ module.exports = (() => {
     getUserKey,
     getTypoCookieByApiKey,
     getValidTypoCookieByApiKey,
-    isNAKUser
+    isNAKUser,
+    loginCorrect
   };
 })();

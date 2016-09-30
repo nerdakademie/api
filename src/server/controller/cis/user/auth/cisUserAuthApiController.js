@@ -16,6 +16,21 @@ module.exports = (() => {
     }
   }
 
+  function loginCorrect(request, response) {
+    if (request.body.username === null || request.body.password === null || request.body.password.length < 1 || request.body.username.length < 1) {
+      response.json({success: false});
+      response.end();
+    } else {
+      cisUserAuthHelper.loginCorrect(request.body.username, request.body.password, function(correct) {
+        if (correct === false) {
+          response.json({success: false});
+        } else {
+          response.json(correct);
+        }
+      });
+    }
+  }
+
   function isNAKUser(request, response) {
     if (request.body.username === null || request.body.password === null) {
       response.status(404).json({nakuser: false, message: 'error wrong data specified'});
@@ -33,6 +48,7 @@ module.exports = (() => {
 
   return {
     getUserKey,
-    isNAKUser
+    isNAKUser,
+    loginCorrect
   };
 })();

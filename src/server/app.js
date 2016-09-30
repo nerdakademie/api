@@ -11,9 +11,6 @@ const MongoStore = require('express-session-mongo');
 const argv = require('minimist')(process.argv.slice(2));
 const swagger = require('swagger-node-express');
 const path = require('path');
-require('./model/oauth/index');
-const oauth2 = require('./helper/oauth');
-const authenticate = require('./helper/oauth/authenticate');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
@@ -30,7 +27,7 @@ app.locals.cache = 'memory';
 app.use(compression({level: 9}));
 
 app.engine('html', consolidate.swig);
-app.set('views', `${__dirname}/../../resources/view`);
+app.set('views', `${__dirname}/../../resources/server/view`);
 app.set('view engine', 'html');
 
 app.use(morgan('dev'));
@@ -59,8 +56,7 @@ app.use(publicWebpackDevMiddleware);
 app.use(webpackHotMiddleware(compiler));
 
 
-// Passport configuration
-require('./helper/passport');
+
 
 
 // Swagger configuration
@@ -84,15 +80,16 @@ require('./model/apiModel');
 
 //OAUTH
 require('./model/oauth/index');
-app.get(`${config.rootPath}/dialog/authorize`, oauth2.authorization);
-app.post(`${config.rootPath}/dialog/authorize/decision`, oauth2.decision);
-app.post('/oauth/token', oauth2.token);
+// Passport configuration
+require('./helper/passport');
 
 // Swagger redirect
 //app.use(config.rootPath, express.static('swagger'));
 app.use(config.rootPath, require('./routes/public/publicRoutes'));
 app.use(`${config.rootPath}/test`, require('./routes/test/testRoutes'));
 app.use(`${config.rootPath}/v1`, require('./routes/apiRoutes'));
+app.use(`${config.rootPath}/oauth`, require('./routes/oauth/oauthRoutes'));
+app.use(`${config.rootPath}/auth`, require('./routes/auth/authRoutes'));
 app.use(require('./routes/errorRoutes'));
 
 module.exports = app;

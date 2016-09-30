@@ -1,13 +1,17 @@
 'use strict';
 
 const mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+      Schema = mongoose.Schema,
+      autoIncrement = require('mongoose-auto-increment'),
+      config = require('config');
+
+autoIncrement.initialize(mongoose.createConnection(config.get('db-url')));
 
 const UserSchema = new Schema({
-  userID: String,
   username:  String,
   password:  String,
-  name: String,
-});
+  nak_cookie: String
 
+});
+UserSchema.plugin(autoIncrement.plugin, { model: 'user', field: 'userID' });
 mongoose.model('user', UserSchema);

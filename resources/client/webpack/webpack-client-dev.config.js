@@ -9,7 +9,8 @@ module.exports = {
   devtool: 'cheap-module-eval-source-map',
   entry: {
     app: ['webpack-hot-middleware/client?reload=true', path.resolve(__dirname, '../../../src/client/app.jsx')],
-    loginForm: ['webpack-hot-middleware/client?reload=true', path.resolve(__dirname, '../../../src/client/component/LoginForm.jsx')]
+    loginForm: ['webpack-hot-middleware/client?reload=true', path.resolve(__dirname, '../../../src/client/component/LoginForm.jsx')],
+    accessDialog: ['webpack-hot-middleware/client?reload=true', path.resolve(__dirname, '../../../src/client/component/AccessDialog.jsx')]
   },
   output: {
     path: path.resolve(__dirname, '../../server/public'),
@@ -20,7 +21,8 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
     new ExtractTextPlugin('css/main.css'),
-    new ExtractTextPlugin('css/login.css')
+    new ExtractTextPlugin('css/login.css'),
+    new ExtractTextPlugin('css/accessDialog.css')
   ],
   module: {
     loaders: [

@@ -30,7 +30,7 @@ gulp.task('watch', () => {
   });
 });
 
-gulp.task('build-client', () => gulp.src('./src/client/app.jsx')
+gulp.task('build-client', () => gulp.src(['./src/client/app.jsx','./src/client/**/*.jsx'])
   .pipe(webpack(webpackClientConfig))
   .pipe(gulp.dest('./resources/server/public')));
 
