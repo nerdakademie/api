@@ -11,7 +11,7 @@
   "scripts": {
     "build": "gulp build",
     "test": "gulp test",
-    "watch": "DEBUG=kadsebot:* NODE_CONFIG_DIR=./resources/config nodemon --ext html,js",
+    "watch": "gulp watch",
     "start": "NODE_CONFIG_DIR=./resources/config NODE_ENV=production node bin/server.js"
   },
   "babel": {
@@ -46,7 +46,11 @@
     "node-uuid": "1.4.7",
     "mongoose": "4.5.8",
     "morgan": "1.7.0",
-    "swig": "1.4.2"
+    "swig": "1.4.2",
+    "webpack": "1.13.2",
+    "webpack-dev-middleware": "1.7.0",
+    "webpack-hot-middleware": "2.12.2",
+    "extract-text-webpack-plugin": "1.0.1"
   },
   "devDependencies": {
     "babel-loader": "6.2.4",
@@ -60,6 +64,7 @@
     "gulp-eslint": "3.0.1",
     "gulp-istanbul": "1.0.0",
     "gulp-mocha": "3.0.0",
+    "gulp-nodemon": "2.1.0",
     "istanbul-instrumenter-loader": "0.2.0",
     "jquery": "3.1.0",
     "karma": "1.2.0",
@@ -75,7 +80,6 @@
     "mocha": "3.0.2",
     "node-sass": "3.8.0",
     "nodemon": "1.10.0",
-    "oauth2-server": "oauthjs/node-oauth2-server",
     "phantomjs-prebuilt": "2.1.11",
     "react": "15.3.0",
     "react-dom": "15.3.0",
@@ -84,7 +88,8 @@
     "sass-loader": "4.0.0",
     "sinon": "1.17.5",
     "sinon-chai": "2.8.0",
-    "supertest": "2.0.0"
+    "supertest": "2.0.0",
+    "webpack-stream": "3.2.0"
   },
   "engines": {
     "node": "5.4.1"

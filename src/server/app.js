@@ -1,6 +1,7 @@
 const config = require('config');
 const bodyParser = require('body-parser');
 const express = require('express');
+const passport = require('passport');
 const compression = require('compression');
 const consolidate = require('consolidate');
 const morgan = require('morgan');
@@ -10,8 +11,13 @@ const MongoStore = require('express-session-mongo');
 const argv = require('minimist')(process.argv.slice(2));
 const swagger = require('swagger-node-express');
 const path = require('path');
-const oauthserver =  require('oauth2-server');
+require('./model/oauth/index');
+const oauth2 = require('./helper/oauth');
 const authenticate = require('./helper/oauth/authenticate');
+const webpack = require('webpack');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
+const webpackClientDevConfig = require('../../resources/client/webpack/webpack-client-dev.config.js');
 
 const app = express();
 
@@ -35,6 +41,26 @@ app.use(session({
   secret: 'Kadse SECRET',
   store: new MongoStore({ip: '127.0.0.1', port: '27017', db: 'kadse', collection: 'sessions'})
 }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+webpackClientDevConfig.output.publicPath = config.rootPath;
+const compiler = webpack(webpackClientDevConfig);
+const publicWebpackDevMiddleware = webpackDevMiddleware(compiler, {
+  publicPath: webpackClientDevConfig.output.publicPath,
+  stats: {
+    colors: true,
+    chunks: false
+  }
+});
+
+app.use(publicWebpackDevMiddleware);
+app.use(webpackHotMiddleware(compiler));
+
+
+// Passport configuration
+require('./helper/passport');
 
 
 // Swagger configuration
@@ -57,11 +83,14 @@ require('./model/statisticModel');
 require('./model/apiModel');
 
 //OAUTH
-require('./helper/oauth')(app)
-//require('./helper/oauth/seed');
+require('./model/oauth/index');
+app.get(`${config.rootPath}/dialog/authorize`, oauth2.authorization);
+app.post(`${config.rootPath}/dialog/authorize/decision`, oauth2.decision);
+app.post('/oauth/token', oauth2.token);
 
 // Swagger redirect
-app.use(config.rootPath, express.static('swagger'));
+//app.use(config.rootPath, express.static('swagger'));
+app.use(config.rootPath, require('./routes/public/publicRoutes'));
 app.use(`${config.rootPath}/test`, require('./routes/test/testRoutes'));
 app.use(`${config.rootPath}/v1`, require('./routes/apiRoutes'));
 app.use(require('./routes/errorRoutes'));

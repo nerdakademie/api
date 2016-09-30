@@ -4,7 +4,39 @@ const istanbul = require('gulp-istanbul');
 const KarmaServer = require('karma').Server;
 const mocha = require('gulp-mocha');
 const runSequence = require('run-sequence');
+const webpack = require('webpack-stream');
+const nodemon = require('gulp-nodemon');
+const webpackClientConfig = require('./resources/client/webpack/webpack-client.config.js');
 
+
+gulp.task('watch', () => {
+  nodemon({
+    script: './bin/server.js',
+    ext: 'js scss html json',
+    watch: [
+      'bin',
+      'resources/client',
+      'resources/server/config',
+      'resources/server/view',
+      'src'
+    ],
+    env: {
+      NODE_ENV: 'local',
+      NODE_CONFIG_DIR: './resources/server/config'
+    },
+    tasks: () => {
+      return [];
+    }
+  });
+});
+
+gulp.task('build-client', () => gulp.src('./src/client/app.jsx')
+  .pipe(webpack(webpackClientConfig))
+  .pipe(gulp.dest('./resources/server/public')));
+
+gulp.task('build', (done) => {
+  runSequence('build-client', done);
+});
 
 gulp.task('eslint', () => {
   const jsFiles = [

@@ -1,6 +1,4 @@
-/**
- * Created by Manjesh on 14-05-2016.
- */
+
 'use strict';
 
 const mongoose = require('mongoose'),
@@ -11,4 +9,4 @@ const OAuthScopeSchema = new Schema({
   is_default: Boolean
 });
 
-module.exports = mongoose.model('OAuthScope', OAuthScopeSchema);
+mongoose.model('OAuthScope', OAuthScopeSchema);

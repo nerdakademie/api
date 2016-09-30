@@ -5,7 +5,7 @@
 var oauthServer = require('oauth2-server');
 var Request = oauthServer.Request;
 var Response = oauthServer.Response;
-var db = require('../../model/oauth')
+var db = require('.././oauth')
 var oauth = require('./oauth')
 
 module.exports = function(options){

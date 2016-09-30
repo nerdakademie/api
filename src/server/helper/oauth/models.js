@@ -3,7 +3,7 @@
  */
 
 var _ = require('lodash');
-var mongodb = require('../../model/oauth');
+var mongodb = require('.././oauth');
 var User = mongodb.User;
 var OAuthClient = mongodb.OAuthClient;
 var OAuthAccessToken = mongodb.OAuthAccessToken;

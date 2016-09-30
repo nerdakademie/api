@@ -1,15 +1,13 @@
-/**
- * Created by Manjesh on 14-05-2016.
-   scope: String
- */
 'use strict';
 
 const mongoose = require('mongoose'),
   Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
+  userID: String,
   username:  String,
-  password:  String
+  password:  String,
+  name: String,
 });
 
-module.exports = mongoose.model('OAuthUser', UserSchema);
+mongoose.model('user', UserSchema);

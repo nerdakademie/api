@@ -6,7 +6,7 @@
  */
 
 'use strict';
-var mongodb = require('../../model/oauth');
+var mongodb = require('.././oauth');
 
 var Thing = mongodb.Thing;
 var OAuthAccessToken = mongodb.OAuthAccessToken
