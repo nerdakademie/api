@@ -278,7 +278,7 @@ module.exports = (() => {
    */
 
 
-  authorization = [
+  const authorization = [
     login.ensureLoggedIn(),
     server.authorization(function (clientID, redirectURI, scope, done) {
       Client.findOne({clientID: clientID}).exec((err, client) => {
@@ -321,7 +321,7 @@ module.exports = (() => {
    * client, the above grant middleware configured above will be invoked to send
    * a response.
    */
-  decision = [
+  const decision = [
     login.ensureLoggedIn(),
     server.decision()
   ];
@@ -334,7 +334,7 @@ module.exports = (() => {
    * exchange middleware will be invoked to handle the request.  Clients must
    * authenticate when making requests to this endpoint.
    */
-  token = [
+  const token = [
     passport.authenticate(['basic', 'oauth2-client-password'], {session: false}),
     server.token(),
     server.errorHandler()
