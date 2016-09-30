@@ -11,6 +11,8 @@ const Client = require('mongoose').model('client');
 
 module.exports = (() => {
 
+  'use strict';
+
 
 // create OAuth 2.0 server
   const server = oauth2orize.createServer();
