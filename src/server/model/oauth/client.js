@@ -1,19 +1,23 @@
 
 'use strict';
 const mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+  Schema = mongoose.Schema,
+  autoIncrement = require('mongoose-auto-increment'),
+  config = require('config');
 
+autoIncrement.initialize(mongoose.createConnection(config.get('db-url')));
 const OAuthClientSchema = new Schema({
-  id: String,
   name:  String,
   clientID:  String,
   clientSecret: String,
+  description: String,
+  contact: String,
   trustedClient: Boolean
 });
 
 
 /*
-db.client.insert({
+db.clients.insert({
  id: '0',
  name:  'TestApp',
  clientID:  'test',
@@ -22,5 +26,6 @@ db.client.insert({
  });
 
  */
+OAuthClientSchema.plugin(autoIncrement.plugin, { model: 'client', field: 'id' });
 
 mongoose.model('client', OAuthClientSchema);

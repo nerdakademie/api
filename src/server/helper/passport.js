@@ -8,6 +8,7 @@ const BearerStrategy = require('passport-http-bearer').Strategy;
 const AccessToken = require('mongoose').model('accessToken');
 const User = require('mongoose').model('user');
 const Client = require('mongoose').model('client');
+const cisUserAuthHelper = require('./cis/user/auth/cisUserAuthHelper');
 
 /**
  * LocalStrategy
@@ -18,18 +19,29 @@ const Client = require('mongoose').model('client');
  */
 passport.use(new LocalStrategy(
   function (username, password, done) {
-    User.findOne({username: username}).exec((err, user) => {
+    User.count({username: username}, function (err, count) {
       if (err) {
-        return done(err);
+        done(false)
+      } else if (count === 0) {
+        cisUserAuthHelper.createUser(username, password, function (result) {
+          done(result);
+        });
+      } else {
+        User.findOne({username: username}).exec((err, user) => {
+          if (err) {
+            return done(err);
+          }
+          if (!user) {
+            return done(null, false);
+          }
+          if (user.password != password) {
+            return done(null, false);
+          }
+          return done(null, user);
+        });
       }
-      if (!user) {
-        return done(null, false);
-      }
-      if (user.password != password) {
-        return done(null, false);
-      }
-      return done(null, user);
     });
+
   }
 ));
 
@@ -155,11 +167,11 @@ passport.use(new BearerStrategy(
 // the client by ID from the database.
 
 passport.serializeUser(function (user, done) {
-  done(null, user.userID);
+  done(null, user.id);
 });
 
 passport.deserializeUser(function (id, done) {
-  User.findOne({userID: id},function (err, user) {
+  User.findOne({id: id},function (err, user) {
     done(err, user);
   });
 });

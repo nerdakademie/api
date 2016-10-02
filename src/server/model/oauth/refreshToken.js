@@ -5,9 +5,9 @@ const mongoose = require('mongoose'),
 
 const RefreshTokenSchema = new Schema({
   token: String,
-  userID: String,
-  clientID: String,
-  scope: String,
+  userID: Number,
+  clientID: Number,
+  scope: [String],
 });
 
 mongoose.model('refreshToken', RefreshTokenSchema);

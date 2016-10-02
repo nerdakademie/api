@@ -13,5 +13,5 @@ const UserSchema = new Schema({
   nak_cookie: String
 
 });
-UserSchema.plugin(autoIncrement.plugin, { model: 'user', field: 'userID' });
+UserSchema.plugin(autoIncrement.plugin, { model: 'user', field: 'id' });
 mongoose.model('user', UserSchema);

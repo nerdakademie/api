@@ -7,9 +7,9 @@ const mongoose = require('mongoose'),
 const OAuthAuthorizationCodeSchema = new Schema({
   authorization_code: String,
   redirect_uri:  String,
-  scope:  String,
-  userID: String,
-  clientID: String,
+  scope:  [String],
+  userID: Number,
+  clientID: Number,
 });
 
 mongoose.model('authorizationCode', OAuthAuthorizationCodeSchema);

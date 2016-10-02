@@ -5,6 +5,6 @@ const passport = require('passport');
 
 router.get('/login',authController.login);
 //router.post('/loginCorrect', cisUserAuthApiController.loginCorrect);
-router.post('/loginCorrect', passport.authenticate('local', {successReturnToOrRedirect: '/', failureRedirect: '/auth/login'}));
+router.post('/login', passport.authenticate('local', {successReturnToOrRedirect: '/', failureRedirect: '/auth/login'}));
 
 module.exports = router;

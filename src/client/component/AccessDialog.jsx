@@ -9,8 +9,6 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 
 class AccessDialog extends React.Component {
 
-
-
   constructor() {
     super();
   }
@@ -34,8 +32,8 @@ class AccessDialog extends React.Component {
                 Do you approve?
               </p>
             </center>
-            <FlatButton name="accept" type="submit" label="Accept" backgroundColor="#4a89dc" hoverColor="#357bd8" labelStyle={{color: '#fff'}} style={style}/>
-            <FlatButton name="cancel" type="submit" label="Deny" backgroundColor="#ff3333" hoverColor="#e60000" labelStyle={{color: '#fff'}} style={style}/>
+            <FlatButton name="accept" type="submit" id="allow" label="Allow" backgroundColor="#4a89dc" hoverColor="#357bd8" labelStyle={{color: '#fff'}} style={style}/>
+            <FlatButton name="cancel" type="submit" id="deny" label="Deny" backgroundColor="#ff3333" hoverColor="#e60000" labelStyle={{color: '#fff'}} style={style}/>
         </form>
       </div>
     );

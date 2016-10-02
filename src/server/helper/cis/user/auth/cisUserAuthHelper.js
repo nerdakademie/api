@@ -136,7 +136,7 @@ module.exports = (() => {
               if (error) {
                 callback(false);
               } else {
-                callback({success: true});
+                callback(true);
               }
             });
           }
@@ -204,6 +204,7 @@ module.exports = (() => {
     getTypoCookieByApiKey,
     getValidTypoCookieByApiKey,
     isNAKUser,
-    loginCorrect
+    loginCorrect,
+    createUser
   };
 })();

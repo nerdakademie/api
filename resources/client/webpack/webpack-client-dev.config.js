@@ -10,7 +10,8 @@ module.exports = {
   entry: {
     app: ['webpack-hot-middleware/client?reload=true', path.resolve(__dirname, '../../../src/client/app.jsx')],
     loginForm: ['webpack-hot-middleware/client?reload=true', path.resolve(__dirname, '../../../src/client/component/LoginForm.jsx')],
-    accessDialog: ['webpack-hot-middleware/client?reload=true', path.resolve(__dirname, '../../../src/client/component/AccessDialog.jsx')]
+    accessDialog: ['webpack-hot-middleware/client?reload=true', path.resolve(__dirname, '../../../src/client/component/AccessDialog.jsx')],
+    registerClient: ['webpack-hot-middleware/client?reload=true', path.resolve(__dirname, '../../../src/client/component/RegisterClient.jsx')]
   },
   output: {
     path: path.resolve(__dirname, '../../server/public'),

@@ -9,10 +9,10 @@ const mongoose = require('mongoose'),
 
 const OAuthAccessTokenSchema = new Schema({
   token: String,
-  userID:  String,
+  userID:  Number,
   expirationDate: Date,
-  clientID: String,
-  scope:  String,
+  clientID: Number,
+  scope:  [String],
 });
 
 mongoose.model('accessToken', OAuthAccessTokenSchema);

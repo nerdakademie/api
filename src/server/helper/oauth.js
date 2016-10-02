@@ -34,12 +34,19 @@ module.exports = (() => {
    * duration, etc. as parsed by the application.  The application issues a code,
    * which is bound to these values, and will be exchanged for an access token.
    */
-  server.grant(oauth2orize.grant.code(function (client, redirectURI, user, ares, done) {
+  server.grant(oauth2orize.grant.code(function (client, redirectURI, user, ares,done) {
     const code = uuid.v4();
+    const scope = String(ares.scope).split('||');
+
+    console.log(client);
+    console.log(user);
+    console.log(ares);
+
+
     const authorizationCode = new AuthorizationCode({
       authorization_code: code,
       redirect_uri: redirectURI,
-      scope: client.scope,
+      scope: scope,
       userID: user.id,
       clientID: client.id,
     });
@@ -99,10 +106,11 @@ module.exports = (() => {
       if (client.id !== authCode.clientID) {
         return done(null, false);
       }
-      if (redirectURI !== authCode.redirectURI) {
+      if (redirectURI !== authCode.redirect_uri) {
         return done(null, false);
       }
-      AuthorizationCode.remove({authorizationCode: code},function (err) {
+      console.log(authCode);
+      AuthorizationCode.remove({authorization_code: code},function (err) {
         if (err) {
           return done(err);
         }
@@ -121,6 +129,7 @@ module.exports = (() => {
           let refreshToken = null;
           //I mimic openid connect's offline scope to determine if we send
           //a refresh token or not
+          console.log(authCode.scope);
           if (authCode.scope && authCode.scope.indexOf("offline_access") === 0) {
             refreshToken = uuid.v4();
             const refreshTokenObject = new RefreshToken({
@@ -279,22 +288,17 @@ module.exports = (() => {
 
 
   const authorization = [
-    login.ensureLoggedIn('/oauth/dialog/login'),
+    login.ensureLoggedIn('/auth/login'),
     server.authorization(function (clientID, redirectURI, scope, done) {
-      console.log(clientID);
-      Client.find({}, function(err, docs) {
-        if (!err){
-          console.log(docs);
-        } else {throw err;}
-      });
-      Client.findOne({clientID: 'test'}).exec((err, client) =>{
-        console.log(client);
+      Client.findOne({clientID: clientID}).exec((err, client) =>{
         if (err) {
           return done(err);
         }
         if (client) {
           client.scope = scope;
         }
+
+        console.log(client);
         // WARNING: For security purposes, it is highly advisable to check that
         //          redirectURI provided by the client matches one registered with
         //          the server.  For simplicity, this example does not.  You have
@@ -307,12 +311,11 @@ module.exports = (() => {
       //TODO Make a mechanism so that if this isn't a trusted client, the user can recorded that they have consented
       //but also make a mechanism so that if the user revokes access to any of the clients then they will have to
       //re-consent.
-      console.log('logged in');
       Client.findOne({clientID: req.query.client_id}).exec((err, client) => {
         if (!err && client && client.trustedClient && client.trustedClient === true) {
           //This is how we short call the decision like the dialog below does
           server.decision({loadTransaction: false}, function (req, callback) {
-            callback(null, {allow: true});
+            callback(null, {scope: req.query.scope});
           })(req, res, next);
         } else {
           res.render('dialog', {transactionID: req.oauth2.transactionID, user: req.user, client: req.oauth2.client});
@@ -331,7 +334,10 @@ module.exports = (() => {
    */
   const decision = [
     login.ensureLoggedIn(),
-    server.decision()
+    server.decision(function (req, callback) {
+      console.log(req.oauth2.req.scope);
+      return callback(null, {scope: req.oauth2.req.scope});
+    })
   ];
 
   /**
@@ -362,11 +368,12 @@ module.exports = (() => {
 // the client by ID from the database.
 
   server.serializeClient(function (client, done) {
-    return done(null, client.id);
+    console.log(client._id);
+    return done(null, client._id);
   });
 
   server.deserializeClient(function (id, done) {
-    Client.findOne({id: id}).exec((err, client) => {
+    Client.findOne({_id: id}).exec((err, client) => {
       if (err) {
         return done(err);
       }
