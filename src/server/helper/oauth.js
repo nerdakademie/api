@@ -105,7 +105,6 @@ module.exports = (() => {
       if (redirectURI !== authCode.redirect_uri) {
         return done(null, false);
       }
-      console.log(authCode);
       AuthorizationCode.remove({authorization_code: code},function (err) {
         if (err) {
           return done(err);
@@ -125,7 +124,6 @@ module.exports = (() => {
           let refreshToken = null;
           //I mimic openid connect's offline scope to determine if we send
           //a refresh token or not
-          console.log(authCode.scope);
           if (authCode.scope && authCode.scope.indexOf("offline_access") === 0) {
             refreshToken = uuid.v4();
             const refreshTokenObject = new RefreshToken({
@@ -294,7 +292,6 @@ module.exports = (() => {
           client.scope = scope;
         }
 
-        console.log(client);
         // WARNING: For security purposes, it is highly advisable to check that
         //          redirectURI provided by the client matches one registered with
         //          the server.  For simplicity, this example does not.  You have
@@ -315,7 +312,7 @@ module.exports = (() => {
           })(req, res, next);
         } else {
           const scopes = String(req.query.scope).split("||");
-          res.render('dialog', {transactionID: req.oauth2.transactionID, user: req.user, client: req.oauth2.client, scopes: scopes});
+          res.render('dialog', {transactionID: req.oauth2.transactionID, user: req.user.username, client: req.oauth2.client.name, scopes: scopes});
         }
       });
     }

@@ -55,8 +55,8 @@ class AccessDialog extends React.Component {
         <form id="form" method="post" action="/oauth/dialog/authorize/decision">
           <input name="transaction_id" type="hidden" value={data.transactionID}/>
           <center>
-            <p>Hi <b>{data.user.username}</b>,<br/>
-              The application <b>{data.client.name}</b> is requesting access to your account.
+            <p>Hi <b>{data.user}</b>,<br/>
+              The application <b>{data.client}</b> is requesting access to your account.
               Do you approve?
             </p>
             <List>
