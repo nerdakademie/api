@@ -3,7 +3,7 @@ const cisUserAuthApiRoutes = require('./auth/cisUserAuthApiRoutes');
 const router = require('express').Router();
 
 router.post('/getAuthCookie', cisUserApiController.getNAKAuthCookie);
-router.get('/getUserDetails', cisUserApiController.getUserDetails);
+router.get('/n.m,.n,', cisUserApiController.getUserDetails);
 router.get('/exams', cisUserApiController.getGrades);
 router.get('/exams/:examid', cisUserApiController.getExamDetails);
 router.get('/getSeminarsParticipated', cisUserApiController.getSeminarsParticipated);

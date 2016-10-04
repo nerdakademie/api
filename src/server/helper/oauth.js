@@ -38,10 +38,6 @@ module.exports = (() => {
     const code = uuid.v4();
     const scope = String(ares.scope).split('||');
 
-    console.log(client);
-    console.log(user);
-    console.log(ares);
-
 
     const authorizationCode = new AuthorizationCode({
       authorization_code: code,
@@ -318,7 +314,8 @@ module.exports = (() => {
             callback(null, {scope: req.query.scope});
           })(req, res, next);
         } else {
-          res.render('dialog', {transactionID: req.oauth2.transactionID, user: req.user, client: req.oauth2.client});
+          const scopes = String(req.query.scope).split("||");
+          res.render('dialog', {transactionID: req.oauth2.transactionID, user: req.user, client: req.oauth2.client, scopes: scopes});
         }
       });
     }
@@ -335,7 +332,6 @@ module.exports = (() => {
   const decision = [
     login.ensureLoggedIn(),
     server.decision(function (req, callback) {
-      console.log(req.oauth2.req.scope);
       return callback(null, {scope: req.oauth2.req.scope});
     })
   ];
@@ -368,7 +364,6 @@ module.exports = (() => {
 // the client by ID from the database.
 
   server.serializeClient(function (client, done) {
-    console.log(client._id);
     return done(null, client._id);
   });
 

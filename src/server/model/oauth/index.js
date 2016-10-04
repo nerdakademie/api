@@ -5,3 +5,5 @@ require('./client');
 require('./accessToken');
 require('./authorizationCode');
 require('./refreshToken');
+require('./scope' );
+require('./seed')();

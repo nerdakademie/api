@@ -6,6 +6,7 @@ router.get('/dialog/authorize', oauth2.authorization);
 router.post('/dialog/authorize/decision', oauth2.decision);
 router.get('/createClient',oauthController.createClient);
 router.post('/token', oauth2.token);
+router.get('/scopes',oauthController.scopes);
 
 
 module.exports = router;

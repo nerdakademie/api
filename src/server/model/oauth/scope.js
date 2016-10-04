@@ -5,8 +5,11 @@ const mongoose = require('mongoose'),
   Schema = mongoose.Schema;
 
 const OAuthScopeSchema = new Schema({
-  scope:  String,
-  is_default: Boolean
+  id: String,
+  name:  String,
+  category: String,
+  description: String,
+
 });
 
-mongoose.model('OAuthScope', OAuthScopeSchema);
+mongoose.model('scope', OAuthScopeSchema);
