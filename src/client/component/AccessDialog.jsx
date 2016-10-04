@@ -72,7 +72,7 @@ class AccessDialog extends React.Component {
                 });
 
                 if(nestedListView.length > 0) {
-                  return <ListItem key={key} primaryText={key} nestedItems={nestedListView}/>;
+                  return <ListItem key={key} primaryText={key} initiallyOpen={true} nestedItems={nestedListView}/>;
                 }
               }, this)}
             </List>
