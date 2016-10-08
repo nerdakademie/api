@@ -10,6 +10,7 @@ const OAuthClientSchema = new Schema({
   name:  String,
   clientID:  String,
   clientSecret: String,
+  redirectURI: String,
   description: String,
   contact: String,
   trustedClient: Boolean
@@ -22,6 +23,9 @@ db.clients.insert({
  name:  'TestApp',
  clientID:  'test',
  clientSecret: 'test',
+ redirectURI: 'https://oauth2orizerecipes.herokuapp.com',
+ description: 'hack',
+ contact: 'localhost@localhost',
  trustedClient: false
  });
 

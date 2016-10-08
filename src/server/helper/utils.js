@@ -1,5 +1,5 @@
 const moment = require('moment');
-const date_regex = /(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.(19|20)\d\d/
+const date_regex = /(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.(19|20)\d\d/;
 
 module.exports = (() => {
   'use strict';
@@ -20,7 +20,7 @@ module.exports = (() => {
   }
 
   function parseTable(cheerioHandle, selection, keys, elementCount, offset) {
-    const tableDictionary = [];s
+    const tableDictionary = [];
     cheerioHandle(selection).each(function (id, elem) {
       if (offset === undefined || id >= offset) {
         const eachEntry = {};
@@ -150,11 +150,7 @@ module.exports = (() => {
   }
 
   function transformRegisterStatus(status){
-    if(status.indexOf('OK!') !== -1 && status.indexOf('Angemeldet!')){
-      return true;
-    }else{
-      return false;
-    }
+    return !!(status.indexOf('OK!') !== -1 && status.indexOf('Angemeldet!'));
   }
 
   function getSeminarQuarterID(year, quarter) {

@@ -1,11 +1,18 @@
 const request = require('request');
 const cisUserHelper = require('../cisUserHelper');
-const Api = require('mongoose').model('Api');
 const User = require('mongoose').model('user');
-const uuid = require('node-uuid');
 
 module.exports = (() => {
   'use strict';
+
+  const scopes = {
+    user_write: 'user:write',
+    user_read: 'user:read',
+    grade_write : 'grade:write',
+    grade_read: 'grade:read',
+    seminar_read: 'seminar:read',
+    seminar_write: 'seminar:write'
+  };
 
   function parseSetCookies(cookieArray) {
     const list = {};
@@ -16,48 +23,6 @@ module.exports = (() => {
       });
     });
     return list;
-  }
-
-  function getApiUserByApiKey(userKey, callback) {
-    Api.findOne({user_key: userKey}).exec((error, apiUser) => {
-      if (error || apiUser === null) {
-        callback(false);
-      } else {
-        callback(apiUser);
-      }
-    });
-  }
-
-  function getApiUserByName(username, callback) {
-    Api.findOne({user: username}).exec((error, apiUser) => {
-      if (error) {
-        callback(false);
-      } else {
-        callback(apiUser);
-      }
-    });
-  }
-
-  function getTypoCookieByApiKey(userkey, callback) {
-    getApiUserByApiKey(userkey, function (apiuser) {
-      if (apiuser === false) {
-        callback(false);
-      } else {
-        callback(apiuser.typo_cookie);
-      }
-    });
-  }
-
-  function getValidTypoCookieByApiKey(userKey, callback) {
-    getApiUserByApiKey(userKey, function(apiUsr) {
-      if (apiUsr === false) {
-        callback(false);
-      } else {
-        getValidNAKCookie(apiUsr, function (cookie) {
-          callback(cookie);
-        });
-      }
-    });
   }
 
   function getNAKAuthCookie(username, password, callback) {
@@ -80,42 +45,6 @@ module.exports = (() => {
             callback(cookieList.fe_typo_user);
           }
         }
-      }
-    });
-  }
-
-  function getUserKey(username, password, callback) {
-    Api.count({user: username}, function (err, count) {
-      if (err) {
-        callback(false);
-      } else if (count === 0) {
-        createUser(username, password, function (result) {
-          callback(result);
-        });
-      } else if (count === 1) {
-        getApiUserByName(username, function (apiUser) {
-          if (password === apiUser.pass) {
-            callback({success: true, userkey: apiUser.user_key});
-          } else {
-            callback(false);
-          }
-        });
-      } else {
-        callback(false);
-      }
-    });
-  }
-
-  function loginCorrect(username, password, done){
-    User.count({username: username}, function (err, count) {
-      if(err){
-        done(false)
-      } else if (count === 0) {
-        createUser(username, password, function (result) {
-          done(result);
-        });
-      } else {
-        done({success: true});
       }
     });
   }
@@ -148,15 +77,15 @@ module.exports = (() => {
   }
 
   function getValidNAKCookie(apiUser, callback) {
-    isCookieValid(apiUser.typo_cookie, function(valid) {
+    isCookieValid(apiUser.nak_cookie, function(valid) {
       if (valid === true) {
-        callback(apiUser.typo_cookie);
+        callback(apiUser.nak_cookie);
       } else {
-        getNAKAuthCookie(apiUser.user, apiUser.pass, function (newCookie) {
+        getNAKAuthCookie(apiUser.username, apiUser.password, function (newCookie) {
           if (newCookie === false) {
             callback(newCookie);
           } else {
-            apiUser.typo_cookie = newCookie;
+            apiUser.nak_cookie = newCookie;
             apiUser.save((error) => {
               if (error) {
                 callback(false);
@@ -169,6 +98,7 @@ module.exports = (() => {
       }
     });
   }
+
 
   function isCookieValid(nak_cookie, callback) {
     const ar = request.jar();
@@ -200,11 +130,10 @@ module.exports = (() => {
   }
 
   return {
-    getUserKey,
-    getTypoCookieByApiKey,
-    getValidTypoCookieByApiKey,
     isNAKUser,
-    loginCorrect,
-    createUser
+    getValidNAKCookie,
+    getNAKAuthCookie,
+    createUser,
+    scopes
   };
 })();

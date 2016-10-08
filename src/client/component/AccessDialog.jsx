@@ -15,11 +15,13 @@ class AccessDialog extends React.Component {
 
   constructor() {
     super();
-    this.state = {scopes: {}};
+    this.state = {scopes: {}, noValidScopes: false};
+
   }
 
   componentDidMount() {
     this.loadScopes();
+    this.checkValidScopes();
   }
 
   loadScopes() {
@@ -30,16 +32,42 @@ class AccessDialog extends React.Component {
     })
   }
 
+  checkValidScopes() {
+    let invalidScopes = 0;
+    Object.keys(this.state.scopes).map(function (key) {
+      console.log(1);
+      this.state.scopes[key].map(function (eachScope) {
+        console.log(data.scopes.indexOf(eachScope.id));
+        if (data.scopes.indexOf(eachScope.id) === -1) {
+          console.log(1);
+          invalidScopes++;
+        }
+      });
+    });
+
+    console.log(2);
+
+    if (invalidScopes > 0) {
+
+      document.getElementById('permissionList').style.visibility = 'hidden';
+      this.setState({
+        noValidScopes: true
+      });
+    }
+
+  }
+
 
   static createScopeGroupItem(scopeJSON) {
     return (
       <ListItem
-                key={scopeJSON.id}
-                primaryText={scopeJSON.name}
-                secondaryText={scopeJSON.description}
-                secondaryTextLines={2}/>
+        key={scopeJSON.id}
+        primaryText={scopeJSON.name}
+        secondaryText={scopeJSON.description}
+        secondaryTextLines={2}/>
     );
   }
+
 
   render() {
     const style = {
@@ -59,11 +87,9 @@ class AccessDialog extends React.Component {
               The application <b>{data.client}</b> is requesting access to your account.
               Do you approve?
             </p>
-            <List>
+            <List id="permissionList">
               <Subheader>Permissions</Subheader>
               {Object.keys(this.state.scopes).map(function (key) {
-                console.log(data.scopes.indexOf(key.toLowerCase()));
-
                 const nestedListView = [];
                 this.state.scopes[key].map(function (eachScope) {
                   if (data.scopes.indexOf(eachScope.id) !== -1) {
@@ -71,17 +97,20 @@ class AccessDialog extends React.Component {
                   }
                 });
 
-                if(nestedListView.length > 0) {
+                if (nestedListView.length > 0) {
                   return <ListItem key={key} primaryText={key} initiallyOpen={true} nestedItems={nestedListView}/>;
+                } else {
+                  //  AccessDialog.noValidScopes(this);
                 }
               }, this)}
             </List>
           </center>
 
           <FlatButton name="accept" type="submit" id="allow" label="Allow" backgroundColor="#4a89dc"
-                      hoverColor="#357bd8" labelStyle={{color: '#fff'}} style={style}/>
+                      hoverColor="#357bd8" labelStyle={{color: '#fff'}} style={style}
+                      disabled={this.state.noValidScopes}/>
           <FlatButton name="cancel" type="submit" id="deny" label="Deny" backgroundColor="#ff3333" hoverColor="#e60000"
-                      labelStyle={{color: '#fff'}} style={style}/>
+                      labelStyle={{color: '#fff'}} style={style} disabled={this.state.noValidScopes}/>
         </form>
       </div>
 

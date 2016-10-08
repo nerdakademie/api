@@ -108,6 +108,7 @@ passport.use(new ClientPasswordStrategy(
 passport.use(new BearerStrategy(
   function (accessToken, done) {
     AccessToken.findOne({token:accessToken}).exec((err, token) => {
+
       if (err) {
         return done(err);
       }
@@ -115,12 +116,12 @@ passport.use(new BearerStrategy(
         return done(null, false);
       }
       if (new Date() > token.expirationDate) {
-        accessToken.remove({token:accessToken}, function (err) {
+        AccessToken.remove({token:accessToken}, function (err) {
           return done(err);
         });
       } else {
         if (token.userID !== null) {
-          User.findOne({userID: token.userID}).exec((err, user) => {
+          User.findOne({id: token.userID}).exec((err, user) => {
             if (err) {
               return done(err);
             }
@@ -129,7 +130,7 @@ passport.use(new BearerStrategy(
             }
             // to keep this example simple, restricted scopes are not implemented,
             // and this is just for illustrative purposes
-            const info = {scope: '*'};
+            const info = {scope: token.scope};
             return done(null, user, info);
           });
         } else {
@@ -144,7 +145,7 @@ passport.use(new BearerStrategy(
             }
             // to keep this example simple, restricted scopes are not implemented,
             // and this is just for illustrative purposes
-            const info = {scope: '*'};
+            const info = {scope: token.scope};
             return done(null, client, info);
           });
         }

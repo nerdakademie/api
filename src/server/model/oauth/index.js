@@ -6,4 +6,5 @@ require('./accessToken');
 require('./authorizationCode');
 require('./refreshToken');
 require('./scope' );
+require('./userGrants');
 require('./seed')();

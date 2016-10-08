@@ -11,7 +11,6 @@ const UserSchema = new Schema({
   username:  String,
   password:  String,
   nak_cookie: String
-
 });
 UserSchema.plugin(autoIncrement.plugin, { model: 'user', field: 'id' });
 mongoose.model('user', UserSchema);

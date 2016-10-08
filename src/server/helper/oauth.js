@@ -8,6 +8,7 @@ const AccessToken = require('mongoose').model('accessToken');
 const RefreshToken = require('mongoose').model('refreshToken');
 const User = require('mongoose').model('user');
 const Client = require('mongoose').model('client');
+const UserGrant = require('mongoose').model('userGrant');
 
 module.exports = (() => {
 
@@ -34,10 +35,9 @@ module.exports = (() => {
    * duration, etc. as parsed by the application.  The application issues a code,
    * which is bound to these values, and will be exchanged for an access token.
    */
-  server.grant(oauth2orize.grant.code(function (client, redirectURI, user, ares,done) {
+  server.grant(oauth2orize.grant.code(function (client, redirectURI, user, ares, done) {
     const code = uuid.v4();
     const scope = String(ares.scope).split('||');
-
 
     const authorizationCode = new AuthorizationCode({
       authorization_code: code,
@@ -47,15 +47,28 @@ module.exports = (() => {
       clientID: client.id,
     });
 
+    const userGrant = new UserGrant({
+      userID: user.id,
+      clientID: client.id,
+      scope: scope,
+    });
+
     authorizationCode.save((err) => {
       if (err) {
         return done(err);
       }
-      return done(null, code);
+      if (!ares.trustedClient) {
 
+        userGrant.save((err) => {
+          if (err) {
+            return done(err);
+          }
+          return done(null, code);
+        });
+      } else {
+        return done(null, code);
+      }
     });
-
-
   }));
 
   /**
@@ -70,10 +83,10 @@ module.exports = (() => {
     const token = uuid.v4();
     const accessToken = new AccessToken({
       token: token,
-      userID:  user.id,
+      userID: user.id,
       expirationDate: calculateExpirationDate(),
       clientID: client.id,
-      scope:  client.scope,
+      scope: client.scope,
     });
     accessToken.save((err) => {
       if (err) {
@@ -105,17 +118,17 @@ module.exports = (() => {
       if (redirectURI !== authCode.redirect_uri) {
         return done(null, false);
       }
-      AuthorizationCode.remove({authorization_code: code},function (err) {
+      AuthorizationCode.remove({authorization_code: code}, function (err) {
         if (err) {
           return done(err);
         }
         const token = uuid.v4();
         const accessToken = new AccessToken({
           token: token,
-          userID:  authCode.userID,
+          userID: authCode.userID,
           expirationDate: calculateExpirationDate(),
           clientID: authCode.clientID,
-          scope:  authCode.scope,
+          scope: authCode.scope,
         });
         accessToken.save((err) => {
           if (err) {
@@ -168,12 +181,12 @@ module.exports = (() => {
       var token = uuid.v4();
       const accessToken = new AccessToken({
         token: token,
-        userID:  user.ID,
+        userID: user.ID,
         expirationDate: calculateExpirationDate(),
         clientID: client.ID,
-        scope:  scope,
+        scope: scope,
       });
-      
+
       accessToken.save((err) => {
         if (err) {
           return done(err);
@@ -214,10 +227,10 @@ module.exports = (() => {
     //Pass in a null for user id since there is no user when using this grant type
     const accessToken = new AccessToken({
       token: token,
-      userID:  null,
+      userID: null,
       expirationDate: calculateExpirationDate(),
       clientID: client.ID,
-      scope:  scope,
+      scope: scope,
     });
     accessToken.save((err) => {
       if (err) {
@@ -235,7 +248,7 @@ module.exports = (() => {
    * token on behalf of the client who authorized the code
    */
   server.exchange(oauth2orize.exchange.refreshToken(function (client, refreshToken, scope, done) {
-    RefreshToken.findOne({token:refreshToken}).exec((err, authCode) => {
+    RefreshToken.findOne({token: refreshToken}).exec((err, authCode) => {
       if (err) {
         return done(err);
       }
@@ -248,16 +261,16 @@ module.exports = (() => {
       var token = uuid.v4();
       const accessToken = new AccessToken({
         token: token,
-        userID:  authCode.userID,
+        userID: authCode.userID,
         expirationDate: calculateExpirationDate(),
         clientID: authCode.clientID,
-        scope:  authCode.scope,
+        scope: authCode.scope,
       });
-      accessToken.save(function (err){
+      accessToken.save(function (err) {
         if (err) {
           return done(err);
         }
-        return done(null, token, null, {expires_in: config.token.expiresIn});
+        return done(null, token, null, {expires_in: 3600});
       });
     });
   }));
@@ -284,18 +297,15 @@ module.exports = (() => {
   const authorization = [
     login.ensureLoggedIn('/auth/login'),
     server.authorization(function (clientID, redirectURI, scope, done) {
-      Client.findOne({clientID: clientID}).exec((err, client) =>{
+      Client.findOne({clientID: clientID}).exec((err, client) => {
         if (err) {
           return done(err);
         }
-        if (client) {
-          client.scope = scope;
+        if(client.redirectURI !== redirectURI){
+          //The redirect URI does not match the redirect URI the client was registered with.
+          //Stop right here
+          done(false);
         }
-
-        // WARNING: For security purposes, it is highly advisable to check that
-        //          redirectURI provided by the client matches one registered with
-        //          the server.  For simplicity, this example does not.  You have
-        //          been warned.
         return done(null, client, redirectURI);
       });
     }),
@@ -308,11 +318,16 @@ module.exports = (() => {
         if (!err && client && client.trustedClient && client.trustedClient === true) {
           //This is how we short call the decision like the dialog below does
           server.decision({loadTransaction: false}, function (req, callback) {
-            callback(null, {scope: req.query.scope});
+            callback(null, {scope: req.query.scope, trustedClient: true});
           })(req, res, next);
         } else {
           const scopes = String(req.query.scope).split("||");
-          res.render('dialog', {transactionID: req.oauth2.transactionID, user: req.user.username, client: req.oauth2.client.name, scopes: scopes});
+          res.render('dialog', {
+            transactionID: req.oauth2.transactionID,
+            user: req.user.username,
+            client: req.oauth2.client.name,
+            scopes: scopes
+          });
         }
       });
     }
@@ -329,7 +344,7 @@ module.exports = (() => {
   const decision = [
     login.ensureLoggedIn(),
     server.decision(function (req, callback) {
-      return callback(null, {scope: req.oauth2.req.scope});
+      return callback(null, {scope: req.oauth2.req.scope, trustedClient: false});
     })
   ];
 
@@ -373,7 +388,7 @@ module.exports = (() => {
     });
   });
 
-  function calculateExpirationDate(){
+  function calculateExpirationDate() {
     return new Date(new Date().getTime() + (3600 * 1000));
   }
 
