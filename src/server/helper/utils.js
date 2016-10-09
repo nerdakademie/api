@@ -117,7 +117,9 @@ module.exports = (() => {
         eachEntry.to = moment(removeWhitespace(children.eq(2).find('b').text()),'DD.MM.YYYY').format('YYYY-MM-DD');
         eachEntry.description = removeWhitespace(children.eq(3).text());
         eachEntry.category = children.eq(4).find('img').attr('title');
-        eachEntry.seminarid = parseInt(children.eq(5).find('a').eq(0).attr('href').match(/\d+$/)[0]);
+        if(children.eq(5).find('a').eq(0).attr('href') !== undefined) {
+          eachEntry.seminarid = parseInt(children.eq(5).find('a').eq(0).attr('href').match(/\d+$/)[0]);
+        }
         tableDictionary.push(eachEntry);
       }
     });

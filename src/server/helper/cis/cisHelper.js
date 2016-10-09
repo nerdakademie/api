@@ -1,5 +1,8 @@
 const utils = require('./../utils');
 const moment = require('moment');
+const request = require('request');
+const cheerio = require('cheerio');
+
 module.exports = (() => {
   'use strict';
 
@@ -38,7 +41,27 @@ module.exports = (() => {
       price: utils.removeWhitespace(parserContext('.speiseplan-preis', element).text()).slice(0, 4)
     };
   }
+
+  function getSeminars( year, quarter, callback) {
+    const options = {
+      method: 'POST',
+      url: 'https://cis.nordakademie.de/seminarwesen/',
+      qs: {'tx_nasemdb_pi1[action]': 'programm'},
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+        'cache-control': 'no-cache'
+      },
+      form: {'tx_nasemdb_pi1[quartal]': utils.getSeminarQuarterID(year, quarter)}
+    };
+
+    request(options, function (error, httpContent, body) {
+      const $ = cheerio.load(body);
+      callback(utils.parseAvailableSeminarsTable($, 'table', 1, 'tr', 1));
+    });
+  }
+
   return {
-    getMeals
+    getMeals,
+    getSeminars
   };
 })();

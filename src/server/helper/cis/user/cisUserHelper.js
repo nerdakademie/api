@@ -76,29 +76,6 @@ module.exports = (() => {
     });
   }
 
-  function getSeminars(nak_cookie, year, quarter, callback) {
-    const ar = request.jar();
-    const cookie = request.cookie('fe_typo_user=' + nak_cookie);
-    ar.setCookie(cookie, 'https://cis.nordakademie.de/seminarwesen/');
-    const options = {
-      method: 'POST',
-      url: 'https://cis.nordakademie.de/seminarwesen/',
-      qs: {'tx_nasemdb_pi1[action]': 'programm'},
-      jar: ar,
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-        'cache-control': 'no-cache'
-      },
-      form: {'tx_nasemdb_pi1[quartal]': utils.getSeminarQuarterID(year, quarter)}
-    };
-
-    request(options, function (error, httpContent, body) {
-      const $ = cheerio.load(body);
-      callback(utils.parseAvailableSeminarsTable($, 'table', 2, 'tr', 1));
-    });
-
-  }
-
   function getSeminarParticipants(nak_cookie, seminarid, callback) {
     const ar = request.jar();
     const cookie = request.cookie('fe_typo_user=' + nak_cookie);
@@ -224,7 +201,6 @@ module.exports = (() => {
     getGrades,
     getExamDetails,
     getSeminarsParticipated,
-    getSeminars,
     getSeminarsRegistered,
     getSeminarsSwitchCase,
     getSeminarInfo,

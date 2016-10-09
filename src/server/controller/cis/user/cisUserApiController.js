@@ -138,28 +138,6 @@ module.exports = (() => {
     }
   }
 
-  function getAvailableSeminars(request, response) {
-    if (request.query.year === undefined || request.query.quarter === undefined) {
-      response.status(404).json({success: false, message: 'error wrong data specified'});
-      response.end();
-    } else {
-      if (request.authInfo.scope.includes(cisUserAuthHelper.scopes.seminar_read)) {
-        cisUserAuthHelper.getValidNAKCookie(request.user, function (nak_cookie) {
-          if (!nak_cookie) {
-            //TODO: Correct error response
-            response.status(404).json({success: false, message: 'error wrong data specified'});
-          } else {
-            cisUserHelper.getSeminars(nak_cookie, request.query.year, request.query.quarter, function (userTable) {
-              response.json(userTable);
-            });
-          }
-        });
-      } else {
-        //TODO: Correct error response
-        response.status(404).json({success: false, message: 'scope not authorized'});
-      }
-    }
-  }
 
   function getSeminarInfo(request, response) {
     if (request.params.seminarid === null) {
@@ -238,7 +216,6 @@ module.exports = (() => {
     getExamDetails,
     getSeminarsParticipated,
     getSeminarsRegistered,
-    getAvailableSeminars,
     getSeminarInfo,
     registerForSeminar,
     deleteRegistrationForSeminar
