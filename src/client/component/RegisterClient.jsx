@@ -6,6 +6,7 @@ import $ from 'jquery';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
+import Recaptcha from 'react-recaptcha';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
@@ -34,6 +35,15 @@ class RegisterClient extends React.Component {
     });
   }
 
+  // specifying your onload callback function
+  callback(){
+  console.log('Done!!!!');
+};
+
+// specifying verify callback function
+  verifyCallback(response) {
+  console.log(response);
+};
 
   render() {
     const fullwidth = {
@@ -68,6 +78,14 @@ class RegisterClient extends React.Component {
             </div>
           <div className="group">
             <FlatButton label="Upload application icon" backgroundColor="#4a89dc" hoverColor="#357bd8" labelStyle={{color: '#fff'}} />
+          </div>
+          <div className="group">
+            <Recaptcha
+              sitekey="6LfwyAgUAAAAAFctYGpJNVr4G0IhyutLp1amzv5N"
+              render="explicit"
+              verifyCallback={this.verifyCallback}
+              onloadCallback={this.callback}
+            />
           </div>
           <FlatButton label="Register" onClick={this.createClient} backgroundColor="#4a89dc" hoverColor="#357bd8" labelStyle={{color: '#fff'}} style={fullwidth}/>
 
