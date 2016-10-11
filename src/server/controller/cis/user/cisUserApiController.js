@@ -21,7 +21,7 @@ module.exports = (() => {
   }
 
   function getUserDetails(request, response) {
-    if (request.authInfo.scope.includes(cisUserAuthHelper.scopes.user_read)) {
+    if (request.authInfo.scope.indexOf(cisUserAuthHelper.scopes.user_read) !== -1) {
       cisUserAuthHelper.getValidNAKCookie(request.user, function (nak_cookie) {
         if (!nak_cookie) {
           //TODO: Correct error response
@@ -44,7 +44,7 @@ module.exports = (() => {
   }
 
   function getGrades(request, response) {
-    if (request.authInfo.scope.includes(cisUserAuthHelper.scopes.grade_read)) {
+    if (request.authInfo.scope.indexOf(cisUserAuthHelper.scopes.grade_read) !== -1) {
       cisUserAuthHelper.getValidNAKCookie(request.user, function (nak_cookie) {
         if (!nak_cookie) {
           //TODO: Correct error response
@@ -70,7 +70,7 @@ module.exports = (() => {
       response.status(404).json({success: false, message: 'error wrong data specified'});
       response.end();
     } else {
-      if (request.authInfo.scope.includes(cisUserAuthHelper.scopes.grade_read)) {
+      if (request.authInfo.scope.indexOf(cisUserAuthHelper.scopes.grade_read) !== -1) {
         cisUserAuthHelper.getValidNAKCookie(request.user, function (nak_cookie) {
           if (!nak_cookie) {
             //TODO: Correct error response
@@ -93,7 +93,7 @@ module.exports = (() => {
   }
 
   function getSeminarsParticipated(request, response) {
-    if (request.authInfo.scope.includes(cisUserAuthHelper.scopes.seminar_read)) {
+    if (request.authInfo.scope.indexOf(cisUserAuthHelper.scopes.seminar_read) !== -1) {
       cisUserAuthHelper.getValidNAKCookie(request.user, function (nak_cookie) {
         if (!nak_cookie) {
           //TODO: Correct error response
@@ -116,7 +116,7 @@ module.exports = (() => {
   }
 
   function getSeminarsRegistered(request, response) {
-    if (request.authInfo.scope.includes(cisUserAuthHelper.scopes.seminar_read)) {
+    if (request.authInfo.scope.indexOf(cisUserAuthHelper.scopes.seminar_read) !== -1) {
       cisUserAuthHelper.getValidNAKCookie(request.user, function (nak_cookie) {
         if (!nak_cookie) {
           //TODO: Correct error response
@@ -144,7 +144,7 @@ module.exports = (() => {
       response.status(404).json({success: false, message: 'error wrong data specified'});
       response.end();
     } else {
-      if (request.authInfo.scope.includes(cisUserAuthHelper.scopes.seminar_read)) {
+      if (request.authInfo.scope.indexOf(cisUserAuthHelper.scopes.seminar_read) !== -1) {
         cisUserAuthHelper.getValidNAKCookie(request.user, function (nak_cookie) {
           if (!nak_cookie) {
             //TODO: Correct error response
@@ -167,7 +167,7 @@ module.exports = (() => {
       response.status(404).json({success: false, message: 'error wrong data specified'});
       response.end();
     } else {
-      if (request.authInfo.scope.includes(cisUserAuthHelper.scopes.seminar_write)) {
+      if (request.authInfo.scope.indexOf(cisUserAuthHelper.scopes.seminar_write) !== -1) {
         cisUserAuthHelper.getValidNAKCookie(request.user, function (nak_cookie) {
           if (!nak_cookie) {
             //TODO: Correct error response
@@ -191,7 +191,7 @@ module.exports = (() => {
       response.status(404).json({success: false, message: 'error wrong data specified'});
       response.end();
     } else {
-      if (request.authInfo.scope.includes(cisUserAuthHelper.scopes.seminar_write)) {
+      if (request.authInfo.scope.indexOf(cisUserAuthHelper.scopes.seminar_write) !== -1) {
         cisUserAuthHelper.getValidNAKCookie(request.user, function (nak_cookie) {
           if (!nak_cookie) {
             //TODO: Correct error response
