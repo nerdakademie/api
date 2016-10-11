@@ -18,14 +18,17 @@ class RegisterClient extends React.Component {
   constructor() {
     super();
     this.state = {
-      responseBody: null,
       captchaCorrect: false,
       file: false,
       name_error: null,
       contact_error: null,
       redirectURI_error: null,
       description_error: null,
-      activeRender: this.formRender.bind(this)
+      activeRender: this.formRender.bind(this),
+      responseBody:{
+        clientID: 'null',
+        clientSecret: 'null'
+      }
     };
     this.email_reg = /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i;
 
@@ -62,8 +65,7 @@ class RegisterClient extends React.Component {
         // Of course you could also just put the `done` function in the file
         // and call it either with or without error in the `thumbnail` event
         // callback, but I think that this is cleaner.
-      }.bind(this),
-      maxfilesexceeded: this.handleFileExceeded.bind(this)
+      }.bind(this)
     };
 
     this.componentConfig = {
@@ -157,7 +159,6 @@ class RegisterClient extends React.Component {
     // For a list of all possible events (there are many), see README.md!
     const eventHandlers = {
       addedfile: this.handleFileAdded.bind(this),
-      maxfilesexceeded: this.handleFileExceeded.bind(this)
     };
 
     return (
