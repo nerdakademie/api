@@ -121,6 +121,7 @@ passport.use(new BearerStrategy(
         });
       } else {
         if (token.userID !== null) {
+          const info = {scope: token.scope};
           User.findOne({id: token.userID}).exec((err, user) => {
             if (err) {
               return done(err);
@@ -128,9 +129,24 @@ passport.use(new BearerStrategy(
             if (!user) {
               return done(null, false);
             }
+            //Attach user to
+            Client.findOne({clientID:token.clientID}).exec((err, client) => {
+              if (err) {
+                const info = {scope: token.scope};
+                return done(null, user, info);
+              }
+              if (!client) {
+                const info = {scope: token.scope};
+                return done(null, user, info);
+              }
+              // to keep this example simple, restricted scopes are not implemented,
+              // and this is just for illustrative purposes
+              const info = {scope: token.scope, client_id: client.id};
+              return done(null, client, info);
+            });
+
             // to keep this example simple, restricted scopes are not implemented,
             // and this is just for illustrative purposes
-            const info = {scope: token.scope};
             return done(null, user, info);
           });
         } else {

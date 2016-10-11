@@ -176,7 +176,6 @@ module.exports = (() => {
         ar.setCookie(cookie, url);
         request.get({url: url, jar: ar}, function (error, httpContent, body) {
           const $ = cheerio.load(body);
-          //console.log($('table').eq(1).find('td').eq(2).find('option').html());
           console.log('switch(year_quarter){')
           $('table').eq(1).find('td').eq(2).find('select').each(function (id, elem) {
             const children = $(elem).children();

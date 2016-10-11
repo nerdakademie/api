@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const MongoStore = require('express-session-mongo');
 const argv = require('minimist')(process.argv.slice(2));
+const multer  =  require('multer');
 const swagger = require('swagger-node-express');
 const path = require('path');
 const webpack = require('webpack');
@@ -90,6 +91,7 @@ app.use(`${config.rootPath}/test`, require('./routes/test/testRoutes'));
 app.use(`${config.rootPath}/v1`, require('./routes/apiRoutes'));
 app.use(`${config.rootPath}/oauth`, require('./routes/oauth/oauthRoutes'));
 app.use(`${config.rootPath}/auth`, require('./routes/auth/authRoutes'));
+app.use(`${config.rootPath}/images`, express.static('resources/public/applicationImages'));
 app.use(require('./routes/errorRoutes'));
 
 module.exports = app;

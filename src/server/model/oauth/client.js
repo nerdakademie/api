@@ -8,11 +8,14 @@ const mongoose = require('mongoose'),
 autoIncrement.initialize(mongoose.createConnection(config.get('db-url')));
 const OAuthClientSchema = new Schema({
   name:  String,
+  appIcon: String,
   clientID:  String,
   clientSecret: String,
   redirectURI: String,
   description: String,
   contact: String,
+  apiCalls: Number,
+  apiLevel: Number,
   trustedClient: Boolean
 });
 
