@@ -8,16 +8,18 @@ info:
   version: "0.0.1"
   title: Nerdakademie API
 
-host: bot.nerdakademie.xyz
+host: api.nerdakademie.xyz
 schemes:
   - https
-basePath: "/api"
+basePath: "/v1"
 
 tags:
   - name: User
     description: User Api
   - name: CIS
     description: CIS relevant API
+  - name: OAuth
+    description: OAuth API used to authenticate with the Cis API
 paths:
 #User
   /user/login:
@@ -78,7 +80,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/successMessage"
-  #Speiseplan
+#Speiseplan
   /cis/speiseplan:
     get:
       description: Get the Speiseplan of the NAK Mensa as a json
@@ -100,7 +102,59 @@ paths:
           description: Successfull
           schema:
             $ref: "#/definitions/speiseplan"
-definitions:
+  /cis/seminars:
+    get:
+      description: Get the available Seminars as json
+      tags:
+        - CIS
+      parameters:
+        - name: year
+          in: query
+          required: false
+          type: number
+          format: int
+        - name: quarter
+          in: query
+          required: false
+          type: number
+          format: int
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/availableSeminars"
+  /cis/user:
+    get:
+      description: Shows user informations
+      tags:
+        - CIS
+      responses:
+        200:
+          description: Success
+  /cis/user/exams:
+    get:
+      description: Shows user exams with credits and result. When examid is specified will display the overview of grades for that exam
+      parameters:
+      - name: examid
+        in: query
+        required: false
+        type: number
+        format: int
+      responses:
+        200:
+          description: Success
+  /cis/user/seminars:
+    get:
+      description: When used without parameter shows the seminars the user participated in. Else it shows details about the exam
+      parameters:
+      - name: seminarid
+        in: query
+        required: false
+        type: number
+        format: int
+      responses:
+        200:
+          description: Success
   successMessage:
     type: object
     properties:
@@ -131,10 +185,34 @@ definitions:
         items:
           $ref: "#/definitions/speiseplan_meals"
   speiseplan_meals:
-      title:  meal
-      type: object
-      properties:
-        description:
-          type: string
-        price:
-          type: string
+    title:  meal
+    type: object
+    properties:
+      description:
+        type: string
+      price:
+        type: string
+  seminar:
+    title: Seminar
+    type: object
+    properties:
+      title:
+        type: string
+      lecturer:
+        type: string
+      from:
+        type: string
+      to:
+        type: string
+      description:
+        type: string
+      category:
+        type: string
+      seminarid:
+        type: number
+        format: int
+  availableSeminars:
+    title: Array of available Seminars
+    type: array
+    items:
+      $ref: "#/definitions/seminar"

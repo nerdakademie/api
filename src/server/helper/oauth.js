@@ -137,7 +137,7 @@ module.exports = (() => {
           let refreshToken = null;
           //I mimic openid connect's offline scope to determine if we send
           //a refresh token or not
-          if (authCode.scope && authCode.scope.indexOf("offline_access") === 0) {
+          if (authCode.scope) {
             refreshToken = uuid.v4();
             const refreshTokenObject = new RefreshToken({
               token: refreshToken,
@@ -194,7 +194,7 @@ module.exports = (() => {
         var refreshToken = null;
         //I mimic openid connect's offline scope to determine if we send
         //a refresh token or not
-        if (scope && scope.indexOf("offline_access") === 0) {
+        if (scope) {
           refreshToken = uuid.v4();
           const refreshTokenObject = new RefreshToken({
             token: refreshToken,

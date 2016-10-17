@@ -1,5 +1,6 @@
 const cisUserHelper = require('../../../helper/cis/user/cisUserHelper');
 const cisUserAuthHelper = require('../../../helper/cis/user/auth/cisUserAuthHelper');
+const Client = require('mongoose').model('client');
 
 module.exports = (() => {
 
@@ -21,6 +22,8 @@ module.exports = (() => {
   }
 
   function getUserDetails(request, response) {
+    console.log(request.authInfo);
+    increaseApiCalls(request.authInfo.client_id);
     if (request.authInfo.scope.indexOf(cisUserAuthHelper.scopes.user_read) !== -1) {
       cisUserAuthHelper.getValidNAKCookie(request.user, function (nak_cookie) {
         if (!nak_cookie) {
@@ -207,6 +210,23 @@ module.exports = (() => {
         response.status(404).json({success: false, message: 'scope not authorized'});
       }
     }
+  }
+
+  function increaseApiCalls(client_id){
+    Client.findOne({id:client_id}).exec((err,client) => {
+      if(!err && client){
+        if(client.apiCalls === undefined){
+          client.apiCalls = 1;
+        }else {
+          client.apiCalls++;
+        }
+        client.save((err) => {
+          if(err){
+            console.log('increseApiCall error');
+          }
+        });
+      }
+    });
   }
 
   return {

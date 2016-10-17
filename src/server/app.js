@@ -85,7 +85,7 @@ require('./model/oauth/index');
 require('./helper/passport');
 
 // Swagger redirect
-//app.use(config.rootPath, express.static('swagger'));
+app.use(`${config.rootPath}/v1/docs`, express.static('swagger'));
 app.use(config.rootPath, require('./routes/public/publicRoutes'));
 app.use(`${config.rootPath}/test`, require('./routes/test/testRoutes'));
 app.use(`${config.rootPath}/v1`, require('./routes/apiRoutes'));

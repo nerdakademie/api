@@ -22,16 +22,28 @@ const OAuthClientSchema = new Schema({
 
 /*
 db.clients.insert({
- id: '0',
+ id: 0,
  name:  'TestApp',
  clientID:  'test',
  clientSecret: 'test',
  redirectURI: 'https://oauth2orizerecipes.herokuapp.com',
  description: 'hack',
  contact: 'localhost@localhost',
+ apiCalls: 0,
+ apiLevel: 0,
  trustedClient: false
  });
 
+db.clients.update({id:0},{ id: 0,
+ name:  'TestApp',
+ clientID:  'test',
+ clientSecret: 'test',
+ redirectURI: 'https://oauth2orizerecipes.herokuapp.com',
+ description: 'hack',
+ contact: 'localhost@localhost',
+ apiCalls: 110,
+ apiLevel: 0,
+ trustedClient: false});
  */
 OAuthClientSchema.plugin(autoIncrement.plugin, { model: 'client', field: 'id' });
 

@@ -121,7 +121,6 @@ passport.use(new BearerStrategy(
         });
       } else {
         if (token.userID !== null) {
-          const info = {scope: token.scope};
           User.findOne({id: token.userID}).exec((err, user) => {
             if (err) {
               return done(err);
@@ -129,25 +128,29 @@ passport.use(new BearerStrategy(
             if (!user) {
               return done(null, false);
             }
-            //Attach user to
-            Client.findOne({clientID:token.clientID}).exec((err, client) => {
+            //Attach client to authInfo
+            Client.findOne({id:token.clientID}).exec((err, client) => {
+              console.log(token.clientID);
               if (err) {
-                const info = {scope: token.scope};
-                return done(null, user, info);
+                return done(err);
               }
               if (!client) {
-                const info = {scope: token.scope};
+                return done(null, false);
+              }
+
+              if(client.apiLevel === undefined || client.apiCalls === undefined){
+                const info = {scope: token.scope, client_id: client.id};
                 return done(null, user, info);
               }
-              // to keep this example simple, restricted scopes are not implemented,
-              // and this is just for illustrative purposes
-              const info = {scope: token.scope, client_id: client.id};
-              return done(null, client, info);
+              if((client.apiLevel === 0 && client.apiCalls > 100) || (client.apiLevel === 1 && client.apiCalls > 1000) || (client.apiLevel === 2 && client.apiCalls > 10000)){
+                done(null,false);
+              }else{
+                // to keep this example simple, restricted scopes are not implemented,
+                // and this is just for illustrative purposes
+                const info = {scope: token.scope, client_id: client.id};
+                return done(null, user, info);
+              }
             });
-
-            // to keep this example simple, restricted scopes are not implemented,
-            // and this is just for illustrative purposes
-            return done(null, user, info);
           });
         } else {
           //The request came from a client only since userID is null
@@ -192,3 +195,5 @@ passport.deserializeUser(function (id, done) {
     done(err, user);
   });
 });
+
+
