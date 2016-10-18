@@ -41,7 +41,7 @@ db.clients.update({id:0},{ id: 0,
  redirectURI: 'https://oauth2orizerecipes.herokuapp.com',
  description: 'hack',
  contact: 'localhost@localhost',
- apiCalls: 110,
+ apiCalls: 0,
  apiLevel: 0,
  trustedClient: false});
  */

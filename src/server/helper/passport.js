@@ -108,7 +108,7 @@ passport.use(new ClientPasswordStrategy(
 passport.use(new BearerStrategy(
   function (accessToken, done) {
     AccessToken.findOne({token:accessToken}).exec((err, token) => {
-
+      console.log(token);
       if (err) {
         return done(err);
       }
@@ -130,7 +130,7 @@ passport.use(new BearerStrategy(
             }
             //Attach client to authInfo
             Client.findOne({id:token.clientID}).exec((err, client) => {
-              console.log(token.clientID);
+              console.log(client);
               if (err) {
                 return done(err);
               }

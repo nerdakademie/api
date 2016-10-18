@@ -58,7 +58,6 @@ module.exports = (() => {
         return done(err);
       }
       if (!ares.trustedClient) {
-
         userGrant.save((err) => {
           if (err) {
             return done(err);
