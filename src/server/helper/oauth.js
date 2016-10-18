@@ -301,10 +301,13 @@ module.exports = (() => {
         if (err) {
           return done(err);
         }
+        if(!client){
+          return done(false);
+        }
         if(client.redirectURI !== redirectURI){
           //The redirect URI does not match the redirect URI the client was registered with.
           //Stop right here
-          done(false);
+          return done(false);
         }
         return done(null, client, redirectURI);
       });
@@ -316,7 +319,7 @@ module.exports = (() => {
       //re-consent.
       Client.findOne({clientID: req.query.client_id}).exec((err, client) => {
         if (!err && client && client.trustedClient && client.trustedClient === true) {
-          //This is how we short call the decision like the dialog below does
+          //This is how we short call the dec0/v1/cis/user/examsision like the dialog below does
           server.decision({loadTransaction: false}, function (req, callback) {
             callback(null, {scope: req.query.scope, trustedClient: true});
           })(req, res, next);

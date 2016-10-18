@@ -8,7 +8,7 @@ module.exports = (() => {
     } else {
       cisUserAuthHelper.getUserKey(request.body.username, request.body.password, function(apiKey) {
         if (apiKey === false) {
-          response.json({sucess: false});
+          response.json({success: false});
         } else {
           response.json(apiKey);
         }
