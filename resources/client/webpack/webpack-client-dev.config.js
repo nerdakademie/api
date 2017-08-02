@@ -18,7 +18,6 @@ module.exports = {
     filename: 'js/[name].js'
   },
   plugins: [
-    new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
     new ExtractTextPlugin('css/main.css'),
